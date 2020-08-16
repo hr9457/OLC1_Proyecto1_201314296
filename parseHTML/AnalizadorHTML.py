@@ -13,6 +13,7 @@ class AnalizadorHTML:
         self.listadoToken = []
         self.listadoErroresLexico = []
 
+
     def automata(self):
         # guardo el tamanio de la cadena de entrada
         largoCadena = len(self.listadoToken)
@@ -22,12 +23,21 @@ class AnalizadorHTML:
         while indice < len(self.txtEntrada):  
 
             # estasdo 0 de simbolos
+            # simbolos de etiquetas principales < / > 
             if self.estado == 0: 
 
                 # comparacion con codigo ascii 60 = <
-                if self.txtEntrada[indice] == chr(60):
+                # si el siguiente char diferente de espacio en blanco es tiqueta
+                if (self.txtEntrada[indice] == chr(60)
+                and self.txtEntrada[indice + 1] != ' '):
                     # self.listadoToken.append([self.txtEntrada[indice],"Tk_<"])
                     indice += 1
+
+                # espacio en blanco despues no es etiqueta es texto
+                elif (self.txtEntrada[indice] == chr(60)
+                and self.txtEntrada[indice + 1] == ' '):
+                    self.estado = 2 # paso al estado 2 para concatenar todo lo que viene
+
 
                 # 47 = /
                 elif self.txtEntrada[indice] == chr(47):
@@ -35,80 +45,40 @@ class AnalizadorHTML:
                     indice += 1
 
                 # 62 = >
+                # cierre etiqueta y busco si existe
                 elif self.txtEntrada[indice] == chr(62):
                     # self.listadoToken.append([self.txtEntrada[indice],"Tk_>"])
                     indice += 1
 
-                # numero
-                elif ((self.txtEntrada[indice] >= chr(48)) 
-                and self.txtEntrada[indice] <= chr(57)):
-                    self.estado = 1
+                # si el caracter es una letra
+                elif (self.txtEntrada[indice].isalpha()
+                or self.txtEntrada[indice].isnumeric()):
+                    indice += 1
 
-                # rango entre la A and Z
-                elif ((self.txtEntrada[indice] >= chr(65) 
-                and self.txtEntrada[indice] <= chr(90))
-                or (self.txtEntrada[indice] >= chr(97) 
-                and self.txtEntrada[indice] <= chr(122))):
-                    self.estado = 2
+                # errores lexicos dentro de etiquetas
+                else:
+                    self.listadoErroresLexico.append([self.numeroError,self.fila,
+                    self.columna,self.txtEntrada[indice]])
+                    self.numeroError += 1
+                    indice += 1
+                    
 
                 
 
             # estado 1 de numeros
             elif self.estado == 1: 
                 
-                # verifico que se un numero lo que estoy viendo de caracter
-                if ((self.txtEntrada[indice] >= chr(48)) 
-                and self.txtEntrada[indice] <= chr(57)):
-                    indice +=1
-
-                # rango entre la A and Z
-                elif ((self.txtEntrada[indice] >= chr(65) 
-                and self.txtEntrada[indice] <= chr(90))
-                or (self.txtEntrada[indice] >= chr(97) 
-                and self.txtEntrada[indice] <= chr(122))):
-                    self.estado = 2
-
-                #  <  /  >
-                elif (self.txtEntrada[indice] == chr(62)
-                or self.txtEntrada[indice] == chr(60) 
-                or self.txtEntrada[indice] == chr(47)):
-                    #busco si es una palabra reservada
-                    self.estado = 0  
+                pass
 
 
-            # estado 2 de letras
+            # estado 2 textos 
             elif self.estado == 2: 
                 
-                # comparacion cuando un caracter es un letra
-                # rango entre la A and Z
-                if ((self.txtEntrada[indice] >= chr(65) 
-                and self.txtEntrada[indice] <= chr(90))
-                or (self.txtEntrada[indice] >= chr(97) 
-                and self.txtEntrada[indice] <= chr(122))):
+                # es una etiqueta 
+                if (self.txtEntrada[indice] == chr(60)
+                and self.txtEntrada[indice + 1] != ' '):
+                    self.estado = 0 # regreso al estado de etiquetas
 
-                    # self.token = self.token + self.txtEntrada[indice]
-                    indice += 1
-
-                # <  /  >
-                elif (self.txtEntrada[indice] == chr(62)
-                or self.txtEntrada[indice] == chr(60) 
-                or self.txtEntrada[indice] == chr(47)):
-                    #busco si es una palabra reservada
-                    self.estado = 0 
-
-
-                # numero
-                elif ((self.txtEntrada[indice] >= chr(48)) 
-                and self.txtEntrada[indice] <= chr(57)):
-                    self.estado = 1
-
-
-                # manejo de error lexico
-                # remplazo por un espacio en blanco
+                # no es una etiqueta es un texto para algo
                 else:
-                    # mando al listado de erroes
-                    self.listadoErroresLexico.append([self.numeroError,self.fila,self.columna,self.txtEntrada[indice]])
-                    self.numeroError += 1
-                    self.token = self.token + " "
-                    indice += 1
                     pass
