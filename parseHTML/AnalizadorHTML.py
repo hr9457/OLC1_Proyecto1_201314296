@@ -5,7 +5,7 @@ class AnalizadorHTML:
     def __init__(self,txtEntrada):
         self.txtEntrada = txtEntrada
         self.estado = 0
-        self.etiqueta = ""
+        self.token = ""
         self.numeroError = 1
         self.fila = 0        
         self.columna = 0        
@@ -36,25 +36,54 @@ class AnalizadorHTML:
                 and self.txtEntrada[puntero + 1] != ' ' ):
 
                     # concateno para la verificacion de la etiquetas
-                    self.etiqueta = self.etiqueta + self.txtEntrada[puntero]
+                    self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
                     self.estado = 1
 
+                elif (self.txtEntrada[puntero] == chr(60) 
+                and self.txtEntrada[puntero] == ' ' ):
+                    # paso al estado 3
+                    self.estado = 3
 
+                
                 # verificiando la etiquetas de cierre
                 elif self.txtEntrada[puntero] == chr(62):
                     
                     # concateno
-                    self.etiqueta = self.etiqueta + self.txtEntrada[puntero]
+                    self.token = self.token + self.txtEntrada[puntero]
                     
                     # busco si es etiqueta valida
-                    if self.etiqueta in self.listadoEtiquetas:
+                    if self.token in self.listadoEtiquetas:
                         pass
                     else:
-                        self.listadoErrores.append([self.numeroError,self.fila,self.columna,self.etiqueta])
+                        self.listadoErrores.append([self.numeroError,self.fila,self.columna,self.token])
 
                     # paso al siguiente caracter
-                    self.etiqueta = ""
+                    self.token = ""
+                    puntero += 1
+                    self.estado = 0
+
+
+                # simbolo de = 
+                elif self.txtEntrada[puntero] == chr(61):
+                    # concateno
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.estado = 0
+
+                # simbolo de "
+                elif self.txtEntrada[puntero] == chr(34):
+                    #concateno
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.estado = 0
+                
+                # moviento en el cursos 
+                elif (self.txtEntrada[puntero] == ' ' 
+                or self.txtEntrada[puntero] == '\n' 
+                or self.txtEntrada[puntero] == '\t'):
+
+                    # lo ignoro
                     puntero += 1
 
 
@@ -68,7 +97,9 @@ class AnalizadorHTML:
                 and self.txtEntrada[puntero] <= chr(122)) ):
 
                     # concateno para la verificion de etiquetas
-                    self.etiqueta = self.etiqueta + self.txtEntrada[puntero]
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.estado = 1
 
                 # numero en la cadena
                 elif (self.txtEntrada[puntero] >= chr(48)
@@ -83,12 +114,11 @@ class AnalizadorHTML:
                 or self.txtEntrada[puntero] == '\n' 
                 or self.txtEntrada[puntero] == '\t'):
 
-                    # concateno en la etiqueta
-                    self.etiqueta = self.etiqueta + self.txtEntradap[puntero]
+                    # lo ignoro
                     puntero += 1
 
 
-                # en caso contrario
+                # en caso contrario es un simbolo
                 else:
                     self.estado = 0
 
@@ -96,5 +126,44 @@ class AnalizadorHTML:
 
             # estado para verificar numeros
             elif self.estado == 2:
-                pass
-                
+                # numero en la cadena
+                if (self.txtEntrada[puntero] >= chr(48)
+                and self.txtEntrada[puntero] <= chr(57)):
+
+                    # paso al estado 2 de numeros
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.estado = 2 
+
+                # si viene una letra en el texto
+                elif ( (self.txtEntrada[puntero] >= chr(65) 
+                and self.txtEntrada[puntero] <= chr(90))
+                or (self.txtEntrada[puntero] >= chr(97)
+                and self.txtEntrada[puntero] <= chr(122)) ):
+
+                    # paso al estado 1
+                    self.estado = 1
+
+                # moviento en el cursos 
+                elif (self.txtEntrada[puntero] == ' ' 
+                or self.txtEntrada[puntero] == '\n' 
+                or self.txtEntrada[puntero] == '\t'):
+
+                    # lo ignoro
+                    puntero += 1
+
+                else:
+                    # paso al estado 0
+                    self.estado = 0
+
+
+            # estado Todo todillo
+            elif self.estado == 3:
+                # mientras no sea
+                if self.txtEntrada[puntero] != chr (60):
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.estado = 3
+
+                else: 
+                    self.estado = 0
