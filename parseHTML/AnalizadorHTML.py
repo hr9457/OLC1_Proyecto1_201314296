@@ -19,6 +19,7 @@ class AnalizadorHTML:
 
 
     def automata(self):
+
         # guardo el tamanio de la cadena de entrada
         largoCadena = len(self.listadoToken)
         # para recorrer caracater por caracter la cadena 
@@ -89,81 +90,12 @@ class AnalizadorHTML:
 
             # estado para letras 
             elif self.estado == 1:
-
-                # verifico si es una letra en la cadena
-                if ( (self.txtEntrada[puntero] >= chr(65) 
-                and self.txtEntrada[puntero] <= chr(90))
-                or (self.txtEntrada[puntero] >= chr(97)
-                and self.txtEntrada[puntero] <= chr(122)) ):
-
-                    # concateno para la verificion de etiquetas
-                    self.token = self.token + self.txtEntrada[puntero]
-                    puntero += 1
-                    self.estado = 1
-
-                # numero en la cadena
-                elif (self.txtEntrada[puntero] >= chr(48)
-                and self.txtEntrada[puntero] <= chr(57)):
-
-                    # paso al estado 2 de numeros
-                    self.estado = 2 
+                pass
 
 
-                # moviento en el cursos 
-                elif (self.txtEntrada[puntero] == ' ' 
-                or self.txtEntrada[puntero] == '\n' 
-                or self.txtEntrada[puntero] == '\t'):
-
-                    # lo ignoro
-                    puntero += 1
-
-
-                # en caso contrario es un simbolo
-                else:
-                    self.estado = 0
-
-
-
-            # estado para verificar numeros
-            elif self.estado == 2:
-                # numero en la cadena
-                if (self.txtEntrada[puntero] >= chr(48)
-                and self.txtEntrada[puntero] <= chr(57)):
-
-                    # paso al estado 2 de numeros
-                    self.token = self.token + self.txtEntrada[puntero]
-                    puntero += 1
-                    self.estado = 2 
-
-                # si viene una letra en el texto
-                elif ( (self.txtEntrada[puntero] >= chr(65) 
-                and self.txtEntrada[puntero] <= chr(90))
-                or (self.txtEntrada[puntero] >= chr(97)
-                and self.txtEntrada[puntero] <= chr(122)) ):
-
-                    # paso al estado 1
-                    self.estado = 1
-
-                # moviento en el cursos 
-                elif (self.txtEntrada[puntero] == ' ' 
-                or self.txtEntrada[puntero] == '\n' 
-                or self.txtEntrada[puntero] == '\t'):
-
-                    # lo ignoro
-                    puntero += 1
-
-                else:
-                    # paso al estado 0
-                    self.estado = 0
-
-
-            # estado Todo todillo
+            # tercer estado
             elif self.estado == 3:
-                # mientras no sea
-                if self.txtEntrada[puntero] != chr (60):
-                    self.token = self.token + self.txtEntrada[puntero]
-                    puntero += 1
-                    self.estado = 3
+                pass
 
-                else: 
-                    self.estado = 0
+
+
