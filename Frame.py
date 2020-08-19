@@ -1,5 +1,9 @@
 from tkinter import *
 
+
+
+
+
 # creacion de la raiz
 raiz=Tk()
 
@@ -15,19 +19,12 @@ raiz.resizable(1,1)
 # menubar
 menubar = Menu(raiz)
 raiz.config(menu=menubar)
-Nuevo = Menu(menubar, tearoff=0)
-Abrir = Menu(menubar, tearoff=0)
-Guardar = Menu(menubar, tearoff=0)
-GuardarComo = Menu(menubar, tearoff=0)
-EjecutarAnalisis = Menu(menubar, tearoff=0)
-Salir = Menu(menubar, tearoff=0)
-
-menubar.add_cascade(label="Nuevo", menu=Nuevo)
-menubar.add_cascade(label="Abrir", menu=Abrir)
-menubar.add_cascade(label="Guardar", menu=Guardar)
-menubar.add_cascade(label="Guardar Como", menu=GuardarComo)
-menubar.add_cascade(label="Ejecutar", menu=EjecutarAnalisis)
-menubar.add_cascade(label="Salir", menu=Salir)
+filemenu = Menu(menubar, tearoff=0)
+editmenu = Menu(menubar, tearoff=0)
+helpmenu = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Archivo", menu=filemenu)
+menubar.add_cascade(label="Editar", menu=editmenu)
+menubar.add_cascade(label="Ayuda", command=raiz.quit)
 
 
 
