@@ -10,11 +10,7 @@ class AnalizadorHTML:
         self.fila = 0        
         self.columna = 0        
         self.caracter = ''
-        self.listadoEtiquetas = ["html","/html","head","/head","body","/body"
-        ,"h1","/h1>","h2","/h2","h3","/h3","h4","/h4","h5","/h5","h6","/h6"
-        ,"p","/p","ul","/ul","li","/li","tr","/tr","td","/td","caption","/caption"
-        ,"colgroup","/colgroup","col","/col","thead","/thead","tbody","/tbody"
-        ,"tfoot","/tfoot"]
+        self.listadoEtiquetas = ["html"]
         self.listadoAtributos = ["src","href","style","border"]
         self.listadoErrores = []
 
