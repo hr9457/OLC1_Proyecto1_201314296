@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from parseJS.ParseJS import parseJS
 
 
 
@@ -16,7 +17,8 @@ def openFile():
 
 #------------------------------------------------------------------------
 # creacion de la raiz
-raiz=Tk() 
+raiz=Tk()
+raiz.config(background="#282a36") 
 #self.elementoVentana()
 #self.ComponentesEditor()
 # siempre al final
@@ -25,13 +27,15 @@ raiz=Tk()
 raiz.title("Proyecto 1 OLC1")
 
 # tamanio de la ventana
-raiz.geometry("1080x720+0+0")
+raiz.geometry("800x660+0+0")
+
 
 # recibe width height
-raiz.resizable(1,1)
+raiz.resizable(0,0)
 
 # que se contraiga o se expanda los elementos de la columna 2
 raiz.columnconfigure(1,weight=1)
+#raiz.rowconfigure(1, weight=1)
 
 # menubar
 menubar = Menu(raiz)
@@ -50,38 +54,48 @@ menubar.add_cascade(label="Ejecutar", menu=ejecutarmenu)
 menubar.add_cascade(label="Salir", command=raiz.quit)
 
 # list box para mostrar las filas
-listaBox = Listbox(raiz)
-listaBox.pack()
-listaBox.config(width=3,font=("Consolas",13),borderwidth=2,background="#C1C2C4",fg='Black')
+#listaBox = Listbox(raiz)
+#listaBox.pack()
+#listaBox.config(width=3,font=("Consolas",13),borderwidth=0,background="#282a36",fg='Black')
 # posicion y que se expanda de alto
-listaBox.grid(row=0,column=0,sticky="ns")
+#listaBox.grid(row=0,column=0,sticky="ns")
+
 
 #scrooll bar
 scrollbar = Scrollbar(raiz, orient=VERTICAL)
 scrollbar.grid(row=0,column=2,sticky="ns")
 
+#--------------------------------------------------
+# segundo scrollbar para texto 
+scrollbarX = Scrollbar(raiz, orient=HORIZONTAL)
+scrollbarX.grid(row=1,column=1,sticky="ew")
+
+
 # area de texto para mostar el texto a analizar
 areaTexto = Text(raiz)        
-areaTexto.config(yscrollcommand=scrollbar.set,font=("Consolas",13),borderwidth=3,background="#4C5658",fg='White')
+areaTexto.config(height=20,xscrollcommand=scrollbarX.set,yscrollcommand=scrollbar.set,
+font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
 # posicion en la matriz y que se expanda en los cuatro puntos cardinales
-areaTexto.grid(row=0,column=1,sticky="nsew")
+areaTexto.grid(row=0,column=1,sticky="ew")
 
 #config del funcion scrooll
+scrollbarX.config(command=areaTexto.xview)
 scrollbar.config(command=areaTexto.yview)
 
-# separador
-labelSeparador = Label(raiz)
-labelSeparador.grid(row=1,column=1)
-
-#areta de texto para mostar la salida de los errores lexicos
-areaTextoErrores = Text(raiz)
-areaTextoErrores.config(font=("Consolas",15,"bold"),borderwidth=3,background="#4C5658",fg='White')
-# poscion en la matriz y que se expanda en los cuatros puntos cardinales
-areaTextoErrores.grid(row=2,column=1,sticky="nsew")
 
 # separador
-labelSeparador2 = Label(raiz)
-labelSeparador2.grid(row=3,column=1)
+#-----------------------------------------------
+areaTextoErrore = Text(raiz)
+areaTextoErrore.config(height=10)
+areaTextoErrore.grid(row=2,column=1,sticky="ew")
+
+scrollbarErrorY = Scrollbar(raiz, orient=VERTICAL,bg="#282a36", troughcolor="steel blue")
+scrollbarErrorY.grid(row=2,column=2,sticky="ns")
+
+#
+areaTextoErrore.config(yscrollcommand=scrollbarErrorY.set,
+font=("Consolas",13),borderwidth=3,background="#282a36",fg='White')
+
 
 # bucle infinito
 raiz.mainloop()
