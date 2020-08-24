@@ -14,6 +14,8 @@ class parseJS:
         "break","return","this","console","Math","pow"]
         self.listadoSimbolos = ["!","&","(",")","*","+","+","-",".",";","<","=",">","{","|","}"]
 
+
+
     #----------------------------------------------
     # metodo para verificacion de tipo de caracter
     # verificacion si es un una letra
@@ -102,9 +104,15 @@ class parseJS:
                     puntero += 1
                     self.estado = 0
 
-                # error lexico
+
+                # ERROR LEXICO
                 else:
-                    pass
+                    self.listaErrores.append([self.numError,self.filaError,self.columnaError,
+                    self.txtEntrada[puntero]])
+                    self.numError += 1
+                    self.token = ""
+                    self.estado = 0
+                    puntero += 1
 
 
             #-----------------------------------------------------------
@@ -143,6 +151,7 @@ class parseJS:
                 else:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
+                    self.numError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
@@ -170,6 +179,7 @@ class parseJS:
                 else:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
+                    self.numError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
@@ -184,21 +194,23 @@ class parseJS:
                     self.token = self.txtEntrada[puntero]
                     #buscqueda entre la tabla de simbolos aceptados
                     self.token = ""
-                    self.estado = 0 # regreso al estado 0
                     puntero +=1
+                    self.estado = 0 # regreso al estado 0
+                    
 
 
                 # ERROR LEXICO
                 else:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
+                    self.numError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
 
 
 
-            # estados para la verificacion de Errores            
+            # estados para comentarios           
             #------------------------------------------------------------------
             # estado para posibles comentarios
             if self.estado == 4:
@@ -208,15 +220,35 @@ class parseJS:
                     puntero += 1
                     self.estado = 5
 
+
                 # comentario multilinea
                 elif self.txtEntrada[puntero] == chr(42): # *
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
                     self.estado = 6
 
+
+                # acpetacion de cadena si solo venia /
+                elif (self.txtEntrada[puntero] == ' '
+                or self.txtEntrada[puntero] == '\n'
+                or self.txtEntrada[puntero] == '\t'
+                or self.txtEntrada[puntero] == '\r'):
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.token = ""
+                    self.estado = 0
+
+
                 # error lexico
                 else:
-                    pass
+                    self.listaErrores.append([self.numError,self.filaError,self.columnaError,
+                    self.txtEntrada[puntero]])
+                    self.numError += 1
+                    self.token = ""
+                    self.estado = 0
+                    puntero += 1
+
+
 
             #----------------------------------------
             #ESTADO DE ACEPTACION DE COMENTARIO UNILINEA
@@ -228,6 +260,8 @@ class parseJS:
 
                 # caso contrario termina la linea de comentario
                 else:
+                    puntero += 1
+                    self.token = ""
                     self.estado = 0
 
 

@@ -53,6 +53,11 @@ menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", menu=ejecutarmenu)
 menubar.add_cascade(label="Salir", command=raiz.quit)
 
+
+#-------------------------------------------------
+LineasTexto = Text(raiz)  
+LineasTexto.config(width=5,height=20,font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
+LineasTexto.grid(row=0,column=0)
 # list box para mostrar las filas
 #listaBox = Listbox(raiz)
 #listaBox.pack()
@@ -74,7 +79,7 @@ scrollbarX.grid(row=1,column=1,sticky="ew")
 # area de texto para mostar el texto a analizar
 areaTexto = Text(raiz)        
 areaTexto.config(height=20,xscrollcommand=scrollbarX.set,yscrollcommand=scrollbar.set,
-font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
+font=("Consolas",13),borderwidth=0,background="#282a36",fg='White')
 # posicion en la matriz y que se expanda en los cuatro puntos cardinales
 areaTexto.grid(row=0,column=1,sticky="ew")
 
@@ -94,7 +99,7 @@ scrollbarErrorY.grid(row=2,column=2,sticky="ns")
 
 #
 areaTextoErrore.config(yscrollcommand=scrollbarErrorY.set,
-font=("Consolas",13),borderwidth=3,background="#282a36",fg='White')
+font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
 
 
 # bucle infinito
