@@ -25,6 +25,7 @@ def analizar():
     global areaTexto
     global areaTextoErrore
     textoCargado = areaTexto.get("0.0",END+"-1c")
+    textoCargado = textoCargado + " "
     #areaTextoErrore.insert(INSERT,textoCargado+"\n")
     if len(textoCargado) == 0:
         areaTextoErrore.delete("1.0",END+"-1c")
@@ -33,7 +34,21 @@ def analizar():
     else:
         areaTextoErrore.delete("1.0",END+"-1c")
         #areaTextoErrore.insert(INSERT,textoCargado+"\n")
-        
+        analizadorjs = parseJS(textoCargado)
+        listaErroresRecibidos = analizadorjs.automata()
+        #---------------------------------------
+        #recorrido de la lista
+        if len(listaErroresRecibidos) == 0:
+            areaTextoErrore.insert(INSERT,"No hay Errores lexico!!!")
+        else:
+            areaTextoErrore.insert(INSERT,"Errores lexicos Encontrados!!!\n")
+            '''
+            for fila in range(len(listaErroresRecibidos)):
+                for j in range(len(listaErroresRecibidos[fila])):
+                    areaTextoErrore.insert(INSERT,listaErroresRecibidos[fila][j]+"\n")
+            '''
+
+
 #-------------------------------------------------------------------------
 
 

@@ -151,11 +151,14 @@ class parseJS:
 
                 # ERROR LEXICO
                 else:
+                    print("Token: "+self.token)
+                    self.token = ""
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.columnaError += 1
                     self.numError += 1
-                    self.token = ""
+                    #impresion del token
+                    print("ERROR LEXICO: "+self.txtEntrada[puntero])
                     self.estado = 0
                     puntero += 1
 
@@ -214,11 +217,15 @@ class parseJS:
 
                 # ERROR LEXICO
                 else:
+                    #impresion del token
+                    print("Token: "+self.token)
+                    self.token = ""
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
                     self.columnaError += 1
-                    self.token = ""
+                    #impresion del token
+                    print("ERROR LEXICO: "+self.txtEntrada[puntero])
                     self.estado = 0
                     puntero += 1
 
@@ -260,11 +267,13 @@ class parseJS:
 
                 # ERROR LEXICO
                 else:
+                    #impresion del token
+                    print("Token: "+self.token)
+                    self.token = ""
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
                     self.columnaError += 1
-                    self.token = ""
                     self.estado = 0
                     puntero += 1
 
@@ -275,9 +284,11 @@ class parseJS:
             if self.estado == 3:
                 # aceptacion para algun simbolo del lenguaje JS
                 if self.isSymbol(self.txtEntrada[puntero]) == True:
-                    self.token = self.txtEntrada[puntero]
-                    self.columnaError += 1
+                    self.token = self.txtEntrada[puntero]                    
+                    #impresion del token
+                    print("Token: "+self.token)
                     self.token = ""
+                    self.columnaError += 1
                     puntero +=1
                     self.estado = 0 # regreso al estado 0
                     
@@ -289,6 +300,8 @@ class parseJS:
                     self.txtEntrada[puntero]])
                     self.numError += 1
                     self.columnaError += 1
+                    #impresion del token
+                    print("ERROR LEXICO: "+self.token)
                     self.token = ""
                     self.estado = 0
                     puntero += 1
