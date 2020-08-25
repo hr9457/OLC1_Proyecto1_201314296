@@ -25,7 +25,7 @@ def analizar():
     global areaTexto
     global areaTextoErrore
     textoCargado = areaTexto.get("0.0",END+"-1c")
-    textoCargado = textoCargado + " "
+    textoCargado = textoCargado
     #areaTextoErrore.insert(INSERT,textoCargado+"\n")
     if len(textoCargado) == 0:
         areaTextoErrore.delete("1.0",END+"-1c")
