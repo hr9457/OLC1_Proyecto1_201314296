@@ -56,6 +56,25 @@ class parseJS:
         else:
             return False
 
+
+    # si viene un moviento en el carro
+    def isMove(self,caracter,columna,fila):
+        # ACEPTACION DE LOS NUMEROS   
+        if caracter == ' ':
+            pass
+
+        elif caracter == '\n':
+            pass
+
+        elif caracter == '\t':
+            pass
+
+        elif caracter == '\r':
+            pass
+
+
+
+
     #-----------------------------------------------
     # metodo para analizar token por token
     # verificacion de la cadena
@@ -69,39 +88,64 @@ class parseJS:
             # estado inicial
             if self.estado == 0:
                 # revision de de entrada en la cadena
-                # es una letra
+                # es una letra pasa al estado 1
                 if self.isLetter(self.txtEntrada[puntero]) == True:
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
                     self.estado = 1
 
 
-                # es un digito
+                # es un digito pasa al estado 2
                 elif self.isNumber(self.txtEntrada[puntero]) == True:
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
                     self.estado = 2
 
 
-                # es un simbolo permitido por el lenguaje
+                # es un simbolo permitido por el lenguaje pasa al estado 3
                 elif self.isSymbol(self.txtEntrada[puntero]) == True:
                     self.estado = 3
 
 
-                # posible comentarios
+                # posible comentarios pasa al estado 4
                 elif self.txtEntrada[puntero] == chr(47): # /
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
+                    self.token = ""
                     self.estado = 4
 
 
-                # movientos en el cursos
-                elif (self.txtEntrada[puntero] == ' '
-                or self.txtEntrada[puntero] == '\n'
-                or self.txtEntrada[puntero] == '\t'
-                or self.txtEntrada[puntero] == '\r'):
-                    #ignoro paso al siguiente caracter
+                # posible cadena de texto estado 9 
+                elif self.txtEntrada[puntero] == chr(34): # ""
+                    self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
+                    self.token = "" 
+                    self.estado = 9
+
+
+                # movientos en el cursos
+                elif (self.txtEntrada[puntero] == ' '):
+                    #ignoro paso al siguiente caracter
+                    self.columnaError += 1
+                    puntero += 1
+                    self.estado = 0
+
+                # tabulacion
+                elif self.txtEntrada[puntero] == '\t':
+                    self.columnaError += 5
+                    puntero += 1
+                    self.estado = 0
+
+                # salto de linea
+                elif (self.txtEntrada[puntero] == '\n'
+                or self.txtEntrada[puntero] == '\r'):
+                    self.filaError += 1
+                    self.columnaError = 0
+                    puntero =+ 1
                     self.estado = 0
 
 
@@ -109,6 +153,7 @@ class parseJS:
                 else:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
+                    self.columnaError += 1
                     self.numError += 1
                     self.token = ""
                     self.estado = 0
@@ -123,28 +168,48 @@ class parseJS:
                 # aceptacion del estado L|D|_
                 if self.isLetter(self.txtEntrada[puntero]) == True:
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
                     self.estado = 1
 
 
                 elif self.isNumber(self.txtEntrada[puntero]) == True:
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
                     self.estado = 1
 
 
                 elif self.txtEntrada[puntero] == chr(95): # _
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
                     self.estado = 1
 
 
-                # comprobacion palabra reservada o ID    
-                elif (self.txtEntrada[puntero] == ' '
-                or self.txtEntrada[puntero] == '\n'
-                or self.txtEntrada[puntero] == '\t'
-                or self.txtEntrada[puntero] == '\r'):
+                # movientos en el cursos
+                elif (self.txtEntrada[puntero] == ' '):
+                    #ignoro paso al siguiente caracter
+                    self.columnaError += 1
+                    puntero += 1
                     self.token = "" # vacio de cadena
+                    self.estado = 0
+
+                # tabulacion
+                elif self.txtEntrada[puntero] == '\t':
+                    self.columnaError += 5
+                    self.token = "" # vacio de cadena
+                    puntero += 1
+                    self.estado = 0
+
+                # salto de linea
+                elif (self.txtEntrada[puntero] == '\n'
+                or self.txtEntrada[puntero] == '\r'):
+                    self.filaError += 1
+                    self.columnaError = 0
+                    self.token = "" # vacio de cadena
+                    puntero += 1
+                    self.estado = 0
 
 
                 # ERROR LEXICO
@@ -152,6 +217,7 @@ class parseJS:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
+                    self.columnaError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
@@ -167,12 +233,29 @@ class parseJS:
                     self.estado = 2
 
 
-                # ACEPTACION DE LOS NUMEROS   
-                elif (self.txtEntrada[puntero] == ' '
-                or self.txtEntrada[puntero] == '\n'
-                or self.txtEntrada[puntero] == '\t'
-                or self.txtEntrada[puntero] == '\r'):
+                # movientos en el cursos
+                elif (self.txtEntrada[puntero] == ' '):
+                    #ignoro paso al siguiente caracter
+                    self.columnaError += 1
+                    puntero += 1
                     self.token = "" # vacio de cadena
+                    self.estado = 0
+
+                # tabulacion
+                elif self.txtEntrada[puntero] == '\t':
+                    self.columnaError += 5
+                    self.token = "" # vacio de cadena
+                    puntero += 1
+                    self.estado = 0
+
+                # salto de linea
+                elif (self.txtEntrada[puntero] == '\n'
+                or self.txtEntrada[puntero] == '\r'):
+                    self.filaError += 1
+                    self.columnaError = 0
+                    self.token = "" # vacio de cadena
+                    puntero += 1
+                    self.estado = 0
 
 
                 # ERROR LEXICO
@@ -180,6 +263,7 @@ class parseJS:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
+                    self.columnaError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
@@ -192,7 +276,7 @@ class parseJS:
                 # aceptacion para algun simbolo del lenguaje JS
                 if self.isSymbol(self.txtEntrada[puntero]) == True:
                     self.token = self.txtEntrada[puntero]
-                    #buscqueda entre la tabla de simbolos aceptados
+                    self.columnaError += 1
                     self.token = ""
                     puntero +=1
                     self.estado = 0 # regreso al estado 0
@@ -204,6 +288,7 @@ class parseJS:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
+                    self.columnaError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
@@ -214,53 +299,77 @@ class parseJS:
             #------------------------------------------------------------------
             # estado para posibles comentarios
             if self.estado == 4:
-                # acpetacion del simbolo /
+                # acpetacion del simbolo / pasa al estado 5
                 if self.txtEntrada[puntero] == chr(47): # /
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.columnaError += 1
                     puntero += 1
+                    self.token = ""
                     self.estado = 5
 
 
-                # comentario multilinea
+                # comentario multilinea paso al estado 7
                 elif self.txtEntrada[puntero] == chr(42): # *
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
+                    self.columnaError += 1
+                    self.token = ""
                     self.estado = 6
 
 
                 # acpetacion de cadena si solo venia /
-                elif (self.txtEntrada[puntero] == ' '
-                or self.txtEntrada[puntero] == '\n'
-                or self.txtEntrada[puntero] == '\t'
-                or self.txtEntrada[puntero] == '\r'):
-                    self.token = self.token + self.txtEntrada[puntero]
+                # movientos en el cursos
+                elif (self.txtEntrada[puntero] == ' '):
+                    #ignoro paso al siguiente caracter
+                    self.columnaError += 1
                     puntero += 1
-                    self.token = ""
+                    self.token = "" # vacio de cadena
+                    self.estado = 0
+
+                # tabulacion
+                elif self.txtEntrada[puntero] == '\t':
+                    self.columnaError += 5
+                    self.token = "" # vacio de cadena
+                    puntero += 1
+                    self.estado = 0
+
+                # salto de linea
+                elif (self.txtEntrada[puntero] == '\n'
+                or self.txtEntrada[puntero] == '\r'):
+                    self.filaError += 1
+                    self.columnaError = 0
+                    self.token = "" # vacio de cadena
+                    puntero += 1
                     self.estado = 0
 
 
-                # error lexico
+                # ERROR LEXICO
                 else:
                     self.listaErrores.append([self.numError,self.filaError,self.columnaError,
                     self.txtEntrada[puntero]])
                     self.numError += 1
+                    self.columnaError += 1
                     self.token = ""
                     self.estado = 0
                     puntero += 1
 
 
 
-            #----------------------------------------
+            #--------------------------------------------------------
             #ESTADO DE ACEPTACION DE COMENTARIO UNILINEA
             # estado para comentarios unilinea
             if self.estado == 5:
                 # acepto todo todillo 
                 if self.txtEntrada[puntero] != chr('\n'):
                     self.token = self.token + self.txtEntrada[puntero]
+                    self.numError += 1
+                    self.estado = 5
 
                 # caso contrario termina la linea de comentario
                 else:
                     puntero += 1
+                    self.columnaError = 0
+                    self.filaError += 1
                     self.token = ""
                     self.estado = 0
 
@@ -272,12 +381,14 @@ class parseJS:
                 if self.txtEntrada[puntero] != chr(42): # *
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
+                    self.columnaError += 1
                     self.estado = 6
 
                 # posible cierre de comentario
                 else:
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
+                    self.columnaError += 1
                     self.estado = 7
 
 
@@ -288,6 +399,7 @@ class parseJS:
                 if self.txtEntrada[puntero] != chr(47): # /
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
+                    self.columnaError += 1
                     self.estado = 6
 
                 else:
@@ -302,7 +414,32 @@ class parseJS:
                 if self.txtEntrada[puntero] == chr(47):
                     self.token = self.token + self.txtEntrada[puntero]
                     puntero += 1
+                    self.columnaError += 1
                     self.estado = 0
                     self.token = "" # vacio cadena
 
-            
+
+
+            #--------------------------------
+            # estado para cadenas de string
+            if self.estado == 9:
+                # concateno todo lo que venga 
+                if self.txtEntrada[puntero] != chr(34):
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.columnaError += 1
+
+                else:
+                    self.token = "" 
+                    self.token = self.token + self.txtEntrada[puntero]
+                    puntero += 1
+                    self.columnaError += 1
+                    self.token = ""
+                    self.estado = 0
+                    
+
+        
+
+        # retorno de la lista con los error encontrados en el archivo
+        return self.listaErrores
+

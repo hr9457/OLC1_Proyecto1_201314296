@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from tkinter import filedialog
 from parseJS.ParseJS import parseJS
 
@@ -16,6 +17,27 @@ def openFile():
     txt_file.close()
 
 #------------------------------------------------------------------------
+
+#------------------------------------------------------------------------
+def analizar():
+    listaErroresRecibidos = []
+    textoCargado = "" 
+    global areaTexto
+    global areaTextoErrore
+    textoCargado = areaTexto.get("0.0",END+"-1c")
+    #areaTextoErrore.insert(INSERT,textoCargado+"\n")
+    if len(textoCargado) == 0:
+        areaTextoErrore.delete("1.0",END+"-1c")
+        areaTextoErrore.insert(INSERT,"texto vacio!!")
+        messagebox.showinfo("ALERTA","No hay texto que analizar")
+    else:
+        areaTextoErrore.delete("1.0",END+"-1c")
+        #areaTextoErrore.insert(INSERT,textoCargado+"\n")
+        
+#-------------------------------------------------------------------------
+
+
+
 # creacion de la raiz
 raiz=Tk()
 raiz.config(background="#282a36") 
@@ -27,7 +49,7 @@ raiz.config(background="#282a36")
 raiz.title("Proyecto 1 OLC1")
 
 # tamanio de la ventana
-raiz.geometry("800x660+0+0")
+raiz.geometry("900x660+100+0")
 
 
 # recibe width height
@@ -50,13 +72,13 @@ menubar.add_cascade(label="Nuevo", menu=nuevomenu)
 menubar.add_cascade(label="Abrir",  command = openFile)
 menubar.add_cascade(label="Guardar", menu=guardarmenu)
 menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
-menubar.add_cascade(label="Ejecutar", menu=ejecutarmenu)
+menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Salir", command=raiz.quit)
 
 
 #-------------------------------------------------
 LineasTexto = Text(raiz)  
-LineasTexto.config(width=5,height=20,font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
+LineasTexto.config(width=3,height=20,font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
 LineasTexto.grid(row=0,column=0)
 # list box para mostrar las filas
 #listaBox = Listbox(raiz)
