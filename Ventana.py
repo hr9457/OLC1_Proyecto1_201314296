@@ -5,10 +5,19 @@ from tkinter import filedialog
 from parseJS.ParseJS import parseJS
 
 
+#--------------------------------------------------------------------
+def new():
+    global areaTexto
+    global areaTextoErrore
+    areaTexto.delete("1.0",END+"-1c")
+    areaTextoErrore.delete("1.0",END+"-1c")
 
 #----------------------------------------------------------------------
-def openFile():
+def openFile():    
     global areaTexto
+    global areaTextoErrore
+    areaTexto.delete("1.0",END+"-1c")
+    areaTextoErrore.delete("1.0",END+"-1c")
     filename = filedialog.askopenfilename(title="Busqueda",
     filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css")))
     txt_file = open(""+filename,'r',encoding='utf-8')
@@ -18,6 +27,11 @@ def openFile():
 
 #------------------------------------------------------------------------
 
+def pruebaTexto():
+    global areaTexto
+    areaTexto.insert(INSERT,u"\u001b[40m hola")
+    print("\u001b[31m hola")
+
 #------------------------------------------------------------------------
 def analizar():
     listaErroresRecibidos = []
@@ -25,7 +39,7 @@ def analizar():
     global areaTexto
     global areaTextoErrore
     textoCargado = areaTexto.get("0.0",END+"-1c")
-    textoCargado = textoCargado
+    textoCargado = textoCargado + "\n"
     #areaTextoErrore.insert(INSERT,textoCargado+"\n")
     if len(textoCargado) == 0:
         areaTextoErrore.delete("1.0",END+"-1c")
@@ -34,22 +48,24 @@ def analizar():
     else:
         areaTextoErrore.delete("1.0",END+"-1c")
         #areaTextoErrore.insert(INSERT,textoCargado+"\n")
-        analizadorjs = parseJS(textoCargado)
+        analizadorjs = parseJS(textoCargado,areaTexto)
         listaErroresRecibidos = analizadorjs.automata()
         #---------------------------------------
         #recorrido de la lista
         if len(listaErroresRecibidos) == 0:
             areaTextoErrore.insert(INSERT,"No hay Errores lexico!!!")
         else:
+            areaTextoErrore.delete("1.0",END+"-1c")
             areaTextoErrore.insert(INSERT,"Errores lexicos Encontrados!!!\n")
-            '''
-            for fila in range(len(listaErroresRecibidos)):
-                for j in range(len(listaErroresRecibidos[fila])):
-                    areaTextoErrore.insert(INSERT,listaErroresRecibidos[fila][j]+"\n")
-            '''
-
-
+            elemento = 0
+            for fila in listaErroresRecibidos:
+                for elemento in fila:
+                    areaTextoErrore.insert(INSERT,elemento)
+                    #print(elemento)
+                areaTextoErrore.insert(INSERT,"\n")                   
 #-------------------------------------------------------------------------
+
+
 
 
 
@@ -83,9 +99,9 @@ guardarmenu = Menu(menubar, tearoff=0)
 guardarComomenu = Menu(menubar, tearoff=0)
 ejecutarmenu = Menu(menubar, tearoff=0)
 
-menubar.add_cascade(label="Nuevo", menu=nuevomenu)
+menubar.add_cascade(label="Nuevo", command=new)
 menubar.add_cascade(label="Abrir",  command = openFile)
-menubar.add_cascade(label="Guardar", menu=guardarmenu)
+menubar.add_cascade(label="Guardar", command=pruebaTexto)
 menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Salir", command=raiz.quit)
