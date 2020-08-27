@@ -29,8 +29,7 @@ def openFile():
 
 def pruebaTexto():
     global areaTexto
-    areaTexto.insert(INSERT,u"\u001b[40m hola")
-    print("\u001b[31m hola")
+    areaTexto.tag_config("print",foreground="blue")
 
 #------------------------------------------------------------------------
 def analizar():
