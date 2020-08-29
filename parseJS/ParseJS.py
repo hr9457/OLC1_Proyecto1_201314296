@@ -1,8 +1,7 @@
 class parseJS:
 
     # metodo constructor
-    def __init__(self,txtEntrada,areaTexto):
-        self.areaTexto = areaTexto
+    def __init__(self,txtEntrada):
         self.txtEntrada = txtEntrada
         self.estado = 0 # estado actual del automa
         # element token error
