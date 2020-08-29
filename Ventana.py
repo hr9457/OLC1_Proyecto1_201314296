@@ -25,7 +25,7 @@ def openFile():
     areaTexto.delete("1.0",END+"-1c")
     areaTextoErrore.delete("1.0",END+"-1c")
     filename = filedialog.askopenfilename(title="Busqueda",
-    filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css")))    
+    filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))    
     txt_file = open(""+filename,'r',encoding='utf-8')
     lectura = txt_file.read()
     areaTexto.insert(END,lectura)
@@ -66,6 +66,10 @@ def analizar():
         elif tipoArchivo == "css":
             css = analizadorcss(textoCargado)
             listaErroresRecibidos = css.automata()
+        elif tipoArchivo == "html":
+            pass
+        elif tipoArchivo == "rmt":
+            pass
          
         #imprimo si tengo errore encontrados
         #---------------------------------------
