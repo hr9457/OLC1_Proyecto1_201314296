@@ -247,7 +247,7 @@ class analizadorcss:
 
             elif self.estado == 7:
                 #acepto todo lo que viene
-                if self.txtEntrada[puntero] != chr(34):
+                if self.txtEntrada[puntero] != chr(34): # ""
                     self.token += self.txtEntrada[puntero]
                     self.estado = 7
 
