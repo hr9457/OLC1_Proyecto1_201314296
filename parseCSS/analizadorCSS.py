@@ -88,7 +88,7 @@ class analizadorcss:
                     self.estado = 3
 
 
-                #si viene el simbolo "
+                #si viene el simbolo " posible string
                 elif self.txtEntrada[puntero] == chr(34): # "
                     self.token += self.txtEntrada[puntero]
                     self.estado = 6
@@ -127,6 +127,7 @@ class analizadorcss:
                     #numero fila columna token
                     self.token += self.txtEntrada[puntero]
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)  
                     self.numeroError += 1
                     self.columna += 1
                     self.token = ""
@@ -138,6 +139,7 @@ class analizadorcss:
             #ESTADOS DE SIMBOLO ACEPTACION
             elif self.estado == 1:
                 self.addToken(self.txtEntrada[puntero])
+                print("Token: "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0
@@ -160,6 +162,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -183,6 +186,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -199,6 +203,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -216,6 +221,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -227,21 +233,16 @@ class analizadorcss:
             #Estado para cadenas y/o aceptacion del simbolo "
             elif self.estado == 6:
                 #si viene una comilla simple "
+                self.addToken(self.token)
+                print("Token: "+self.token)
+                self.token = ""
+                self.columna += 1
                 if self.txtEntrada[puntero] == chr(34): # "
-                    self.addToken(self.token)
-                    self.token = ""
-                    self.columna += 1
-                    self.token += self.txtEntrada[puntero]
-                    self.addToken(self.token)
-                    self.token = ""
-                    self.columna += 1
                     self.estado = 8
+                    puntero -= 1
 
                 else:
-                    # acepto las comillas y paso al estado 7
-                    self.addToken(self.token)
-                    self.token = ""
-                    self.columna += 1
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 7
 
 
@@ -253,8 +254,10 @@ class analizadorcss:
 
                 #ACEPTACION
                 else:
+                    #impresion del token
                     self.addToken(self.token)
-                    self.token = ""
+                    print("Cadena: "+self.token)
+                    self.token = ""  
                     self.columna += 1
                     self.estado = 8
                     puntero -= 1
@@ -263,17 +266,12 @@ class analizadorcss:
             #aceptacion del simbolo " cierre de un string
             elif self.estado == 8:
                 # si viene comillas simples
-                if self.txtEntrada[puntero] == chr(34):
-                    self.token += self.txtEntrada[puntero]
-                    self.estado = 8
-
-                #ACEPTACION
-                else:
-                    self.addToken(self.token)
-                    self.token = ""
-                    self.columna += 1
-                    self.estado = 0
-                    puntero -= 1
+                self.token = self.txtEntrada[puntero]
+                self.addToken(self.token)
+                print("Token: "+self.token)
+                self.token = ""  
+                self.columna += 1
+                self.estado = 0
                 
             
 
@@ -289,6 +287,7 @@ class analizadorcss:
                 #aceptacion
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -306,6 +305,7 @@ class analizadorcss:
                 #aceptacion
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -325,6 +325,7 @@ class analizadorcss:
                 #aceptacion
                 else:
                     self.addToken(self.token)
+                    print("Token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -357,6 +358,7 @@ class analizadorcss:
             elif self.estado == 14:
                 #acepto el token
                 self.addToken(self.token)
+                print("Token: "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0 
