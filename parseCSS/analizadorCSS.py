@@ -138,7 +138,7 @@ class analizadorcss:
             #-------------------------------------------------------------
             #ESTADOS DE SIMBOLO ACEPTACION
             elif self.estado == 1:
-                self.addToken(self.txtEntrada[puntero])
+                self.addToken(self.token)
                 print("Token: "+self.token)
                 self.token = ""
                 self.columna += 1

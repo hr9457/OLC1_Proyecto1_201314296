@@ -3,8 +3,9 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
-from parseJS.ParseJS import parseJS
-from parseCSS.analizadorCSS import analizadorcss
+from parseJS.ParseJS import parseJS # analizador para javaScript
+from parseCSS.analizadorCSS import analizadorcss # analizador para css
+from parseOperaciones.analizadorOP import analizadorOperaciones # analizador para operaciones
 
 
 
@@ -69,7 +70,8 @@ def analizar():
         elif tipoArchivo == "html":
             pass
         elif tipoArchivo == "rmt":
-            pass
+            operacones = analizadorOperaciones(textoCargado)
+            listaErroresRecibidos = operacones.automata()
          
         #imprimo si tengo errore encontrados
         #---------------------------------------
