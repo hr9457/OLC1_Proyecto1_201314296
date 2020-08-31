@@ -210,5 +210,6 @@ class analizadorOperaciones:
             #dentro del texto
             puntero += 1
 
-            #retorno la lista de erroes si existieran
-            return self.listaErrores
+
+        #retorno la lista de erroes si existieran
+        return self.listaErrores

@@ -35,11 +35,18 @@ def openFile():
     tipoArchivo = archivoSeperado[1]
     areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo)
 
+
+#pruebapara colo de texto para el pintado de las letras
 #------------------------------------------------------------------------
 
 def pruebaTexto():
-    global areaTexto
-    areaTexto.tag_config("print",foreground="blue")
+    global areaTexto    
+    areaTexto.tag_config("tk_id", foreground="#38DF43")
+    areaTexto.tag_config("tk_operador", foreground="#4371CD")
+    areaTexto.tag_config("tk_numero",foreground="#FF9A1B")
+    areaTexto.insert(INSERT,"var1", "tk_id")
+    areaTexto.insert(INSERT,"=","tk_operador")
+    areaTexto.insert(INSERT,"5555","tk_numero")
 
 #------------------------------------------------------------------------
 def analizar():    
@@ -133,7 +140,7 @@ ejecutarmenu = Menu(menubar, tearoff=0)
 
 menubar.add_cascade(label="Nuevo", command=new)
 menubar.add_cascade(label="Abrir",  command = openFile)
-menubar.add_cascade(label="Guardar")
+menubar.add_cascade(label="Guardar", command = pruebaTexto)
 menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Salir", command=raiz.quit)
