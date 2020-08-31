@@ -171,8 +171,17 @@ scrollbarX.grid(row=1,column=1,sticky="ew")
 # area de texto para mostar el texto a analizar
 areaTexto = Text(raiz)        
 areaTexto.config(height=20,xscrollcommand=scrollbarX.set,yscrollcommand=scrollbar.set,
-font=("Consolas",13),borderwidth=0,background="#282a36",fg='White',selectbackground="#779ECB"
+font=("Consolas",14),borderwidth=0,background="#282a36",fg='White',selectbackground="#779ECB"
 ,insertbackground='white')
+#*******************************************
+#colores predeterminados para el area de texto
+areaTexto.tag_config("Tk_reservada", foreground="#F42424")#palabras reservadas
+areaTexto.tag_config("Tk_id", foreground="#1CC31C")#variables
+areaTexto.tag_config("Tk_string", foreground="#EDF223")#string y char
+areaTexto.tag_config("Tk_int", foreground="#20679D")#enteros y boolean
+areaTexto.tag_config("Tk_comentario", foreground="#BE1C82")#comentarios
+areaTexto.tag_config("Tk_operador", foreground="#F48024")#operadores
+areaTexto.tag_config("otro",foreground="#179D7F")#otros
 # posicion en la matriz y que se expanda en los cuatro puntos cardinales
 areaTexto.grid(row=0,column=1,sticky="ew")
 
