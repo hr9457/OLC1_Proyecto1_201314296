@@ -32,20 +32,31 @@ class analizadorOperaciones:
      # verificacion si un es un simbolo permitido por el lenguaje CSS
      # 12 simbolos identificados
     def isSymbol(self,caracter):
-        if( caracter == chr(40) # (
-        or caracter == chr(41) # )
-        or caracter == chr(42) # *
-        or caracter == chr(43) # +
-        or caracter == chr(45) # -        
-        or caracter == chr(47)): # /
+        if caracter == chr(40): # (
+            self.addToken("Tk_apertura",caracter)
+            return True
+        elif caracter == chr(41): # )
+            self.addToken("Tk_cierre",caracter)
+            return True
+        elif caracter == chr(42): # *
+            self.addToken("Tk_multipliacion",caracter)
+            return True
+        elif caracter == chr(43): # +
+            self.addToken("Tk_suma",caracter)
+            return True
+        elif caracter == chr(45): # -  
+            self.addToken("Tk_resta",caracter)  
+            return True    
+        elif caracter == chr(47): # /
+            self.addToken("Tk_division",caracter)
             return True
         else:
             return False
 
 
     # agreacion de token
-    def addToken(self,token):
-        self.listaToken.append(token)
+    def addToken(self,tipo,token):
+        self.listaToken.append([tipo,token])
 
 
     # error lexico
@@ -93,6 +104,8 @@ class analizadorOperaciones:
                     
                 # si vien un salto de linea
                 elif self.txtEntrada[puntero] == "\n":
+                    self.addToken("tk_salto",self.token)
+                    #print("Fin Op: "+self.token)
                     self.columna = 0
                     self.fila += 1
 
@@ -110,8 +123,8 @@ class analizadorOperaciones:
             #------------------------------------------------------------------
             # ESTADO PARA SIMBOLOS y/o ACEPTACION
             elif self.estado == 1:
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                #self.addToken("Tk_operador",self.token)
+                print("operador: "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0
@@ -133,8 +146,8 @@ class analizadorOperaciones:
 
                 #aceptacion
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_digito",self.token)
+                    print("digito: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -151,8 +164,8 @@ class analizadorOperaciones:
 
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    #self.addToken(self.token)
+                    print("token: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -169,8 +182,8 @@ class analizadorOperaciones:
 
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_digito",self.token)
+                    print("digito: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -198,8 +211,8 @@ class analizadorOperaciones:
 
                 #ACEPTACION DE LA CADENA
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_id",self.token)
+                    print("variable: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -212,4 +225,4 @@ class analizadorOperaciones:
 
 
         #retorno la lista de erroes si existieran
-        return self.listaErrores
+        return self.listaErrores,self.listaToken

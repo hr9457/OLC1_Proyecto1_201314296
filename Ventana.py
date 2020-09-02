@@ -5,10 +5,12 @@ from tkinter import messagebox
 from tkinter import filedialog
 from parseJS.ParseJS import parseJS # analizador para javaScript
 from parseCSS.analizadorCSS import analizadorcss # analizador para css
-from parseOperaciones.analizadorOP import analizadorOperaciones # analizador para operaciones
+from parseOperaciones.analizadorOP import analizadorOperaciones # analizador lexico para operaciones
+from parseOperaciones.analizadorSintactico import analizadoSintactico # analizador sintatico op
 
 
-
+#-------------------------------------------------------------------
+#saber que tipo de archivo fue el de apertura
 tipoArchivo = ""
 
 #--------------------------------------------------------------------
@@ -51,6 +53,7 @@ def pruebaTexto():
 #------------------------------------------------------------------------
 def analizar():    
     
+    listaTokenRecibidos = []
     listaErroresRecibidos = []
     textoCargado = "" 
     global areaTexto
@@ -77,8 +80,12 @@ def analizar():
         elif tipoArchivo == "html":
             pass
         elif tipoArchivo == "rmt":
-            operacones = analizadorOperaciones(textoCargado)
-            listaErroresRecibidos = operacones.automata()
+            operacones = analizadorOperaciones(textoCargado)            
+            # multiple return = erroes lexicos y los token aceptados
+            listaErroresRecibidos,listaTokenRecibidos = operacones.automata()
+            #envio y analisis sintactico
+            operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
+            operacionesSintactico.arranque()
          
         #imprimo si tengo errore encontrados
         #---------------------------------------
@@ -178,7 +185,7 @@ font=("Consolas",14),borderwidth=0,background="#282a36",fg='White',selectbackgro
 areaTexto.tag_config("Tk_reservada", foreground="#F42424")#palabras reservadas
 areaTexto.tag_config("Tk_id", foreground="#1CC31C")#variables
 areaTexto.tag_config("Tk_string", foreground="#EDF223")#string y char
-areaTexto.tag_config("Tk_int", foreground="#20679D")#enteros y boolean
+areaTexto.tag_config("Tk_digito", foreground="#20679D")#enteros y boolean
 areaTexto.tag_config("Tk_comentario", foreground="#BE1C82")#comentarios
 areaTexto.tag_config("Tk_operador", foreground="#F48024")#operadores
 areaTexto.tag_config("otro",foreground="#179D7F")#otros
