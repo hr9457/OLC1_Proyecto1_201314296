@@ -11,8 +11,9 @@ class parseJS:
         self.token = "" # token
         self.listaErrores = [] # listado para los erroes
         self.listaToken = []
-        self.listaReservadas = ["var","true","false","if","else","for","while","do",
-        "break","return","this","console","Math","pow"]
+        self.listaReservadas = ["var","if","else","for","do","while","console",
+        "continue","break","return","false","true","this","constructor",
+        "Math","function","class"] # lista de palabras reservadas
 
 
 
@@ -41,6 +42,7 @@ class parseJS:
         or caracter == chr(41) # )
         or caracter == chr(42) # *
         or caracter == chr(43) # +
+        or caracter == chr(44) # ,
         or caracter == chr(45) # -
         or caracter == chr(46) # .
         or caracter == chr(58) # :
@@ -58,8 +60,8 @@ class parseJS:
             return False
 
     # agreacion de token
-    def addToken(self,token):
-        self.listaToken.append(token)
+    def addToken(self,lexema,token):
+        self.listaToken.append([lexema,token])
 
     # error lexico
     def errorLexico(self,numero,fila,columna,token):
@@ -171,12 +173,21 @@ class parseJS:
 
                 # ACEPTO
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
-                    self.token = ""
-                    self.columna += 1
-                    self.estado = 0
-                    puntero -= 1
+                    #buscando la concatenacion en la lista de palabras reservadas
+                    if self.token in self.listaReservadas:
+                        self.addToken("Tk_reservada",self.token)
+                        print("RESERVADA : "+self.token)
+                        self.token = ""
+                        self.columna += 1
+                        self.estado = 0
+                        puntero -= 1
+                    else:
+                        self.addToken("Tk_id",self.token)
+                        print("ID : "+self.token)
+                        self.token = ""
+                        self.columna += 1
+                        self.estado = 0
+                        puntero -= 1
 
 
             #--------------------------------------------------------------
@@ -189,15 +200,24 @@ class parseJS:
                     self.estado = 2
 
 
+                # para nuemros decimales
+                elif self.txtEntrada[puntero] == chr(46): # punto .
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 15
+
+
                 # ACEPTO
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_digito",self.token)
+                    print("Numero : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
 
+
+            
+            
 
 
             #-----------------------------------------------------------
@@ -205,8 +225,8 @@ class parseJS:
             # estado para simbolos
             elif self.estado == 3:
                 lex = self.txtEntrada[puntero]
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                self.addToken("Tk_operador",self.token)
+                print("Operador: "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0
@@ -233,8 +253,8 @@ class parseJS:
 
                 # ACEPTO LA CADENA
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_operador",self.token)
+                    print("operador : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -252,8 +272,8 @@ class parseJS:
 
                 # ACEPTO LA CADENA 
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_comentario",self.token)
+                    print("COMENTARIO : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -278,7 +298,8 @@ class parseJS:
             elif self.estado == 7:
                 # revision de posible cierre de comentario multilinea
                 if self.txtEntrada[puntero] != chr(47): # /
-                    self.token += self.txtEntrada[puntero]
+                    #self.token += self.txtEntrada[puntero]
+                    puntero -= 1
                     self.estado = 6
 
                 else:
@@ -291,8 +312,8 @@ class parseJS:
             #-----------------------------------------------------------------
             # estado para verificar si va se cerrar comentario multilinea
             elif self.estado == 8:
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                self.addToken("Tk_comentario",self.token)
+                print("COMENTARIO : "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0
@@ -303,13 +324,13 @@ class parseJS:
             #---------------------------------------------------------------------
             # estado para cadenas de string
             elif self.estado == 9:
-                self.addToken(self.token)
-                print("Token: "+self.token)
-                self.token = ""
-                self.columna += 1
-                if self.txtEntrada[puntero] == chr(34):
+                #self.addToken(self.token)
+                #print("Token: "+self.token)
+                #self.token = ""
+                #self.columna += 1
+                if self.txtEntrada[puntero] == chr(34): # ""
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 11
-                    puntero -= 1
 
                 # ACEPTO
                 else:
@@ -326,19 +347,20 @@ class parseJS:
                 # ACEPTO
                 else:
                     #impresion del token
-                    self.addToken(self.token)
-                    print("Cadena: "+self.token)
-                    self.token = ""  
-                    self.columna += 1
+                    #self.addToken(self.token)
+                    #print("Cadena: "+self.token)
+                    #self.token = ""  
+                    #self.columna += 1
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 11
                     puntero -= 1
 
 
             # acpetacion de las comillas dobles
             elif self.estado == 11:
-                self.token = self.txtEntrada[puntero]
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                #self.token = self.txtEntrada[puntero]
+                self.addToken("Tk_string",self.token)
+                print("CADEMA : "+self.token)
                 self.token = ""  
                 self.columna += 1
                 self.estado = 0
@@ -347,13 +369,14 @@ class parseJS:
 
             # si viene un ' comilla simple en la cadena
             elif self.estado == 12:
-                lex = self.txtEntrada[puntero]
-                self.addToken(self.token)
-                print("Token: "+self.token)
-                self.token = ""
-                self.columna += 1
+                #lex = self.txtEntrada[puntero]
+                #self.addToken(self.token)
+                #print("Token: "+self.token)
+                #self.token = ""
+                #self.columna += 1
                 #si viene un comilla simple
-                if self.txtEntrada[puntero] == chr(39):
+                if self.txtEntrada[puntero] == chr(39): # '
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 14
                     puntero -= 1
 
@@ -364,28 +387,60 @@ class parseJS:
 
             # contenido de todas las comillas en el contenido
             elif self.estado == 13:
-                if self.txtEntrada[puntero] != chr(39):
+                if self.txtEntrada[puntero] != chr(39): # '
                     self.token += self.txtEntrada[puntero]
                     self.estado = 13
                 else:
                     #impresion del token
-                    self.addToken(self.token)
-                    print("Cadena: "+self.token)
-                    self.token = ""  
-                    self.columna += 1
+                    #self.addToken(self.token)
+                    #print("Cadena: "+self.token)
+                    #self.token = ""  
+                    #self.columna += 1
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 14
                     puntero -= 1
 
 
             # aceptacion de las comillas simples
             elif self.estado == 14:
-                self.token = self.txtEntrada[puntero]
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                #self.token = self.txtEntrada[puntero]
+                self.addToken("Tk_string",self.token)
+                print("CADENA : "+self.token)
                 self.token = ""  
                 self.columna += 1
                 self.estado = 0
 
+
+            # para punto decimal
+            elif self.estado == 15:
+                if self.isNumber(self.txtEntrada[puntero]) == True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 16
+
+                else:                    
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna += 1
+                    self.estado = 0
+                    puntero -= 1
+
+
+            #---------------------------------------------------------------
+            #ACEPTACION PARA NUMEROS DECIMALES
+            elif self.estado == 16:
+                if self.isNumber(self.txtEntrada[puntero])==True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 16
+
+                else:
+                    self.addToken("Tk_digito",self.token)
+                    print("DIGITO :"+self.token)
+                    self.token = ""
+                    self.columna += 1
+                    self.estado = 0
+                    puntero -= 1
 
             
             #pasa al siguiente caracter

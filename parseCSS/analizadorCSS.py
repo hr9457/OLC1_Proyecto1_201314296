@@ -202,9 +202,10 @@ class analizadorcss:
 
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error Lexico : "+self.token)
                     self.token = ""
+                    self.numeroError += 1
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
@@ -347,7 +348,8 @@ class analizadorcss:
             elif self.estado == 13:
                 #mientras sea diferente a /
                 if self.txtEntrada[puntero] != chr(47):
-                    self.token += self.txtEntrada[puntero]
+                    #self.token += self.txtEntrada[puntero]
+                    puntero -= 1
                     self.estado = 12
 
                 else:

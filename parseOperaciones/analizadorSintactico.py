@@ -8,6 +8,7 @@ class analizadoSintactico:
         self.listaErrores = []
 
 
+
     #--------------------------------------------------------------------------------
     #metodo de parea
     def match(self,preanalisis):
@@ -112,6 +113,7 @@ class analizadoSintactico:
             self.match("Tk_id")
             #print(" ID ")
 
+        
         else:
             pass
 
