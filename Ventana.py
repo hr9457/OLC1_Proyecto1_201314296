@@ -1,4 +1,6 @@
 import io
+import os
+import subprocess
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -179,7 +181,12 @@ def contadorLineas():
     print(lineasTxt)
 #------------------------------------------------------------------------
 
-
+# APERTURA DE REPORTE HMTL
+#--------------------------------------------------------------------------
+def reporteHtml():
+    comandoApertura ='ReporteHTML\\ReporteErrores.html'
+    subprocess.Popen(comandoApertura,shell=True)
+#--------------------------------------------------------------------------
 
 
 # creacion de la raiz
@@ -211,13 +218,19 @@ abrirmenu = Menu(menubar, tearoff=0)
 guardarmenu = Menu(menubar, tearoff=0)
 guardarComomenu = Menu(menubar, tearoff=0)
 ejecutarmenu = Menu(menubar, tearoff=0)
+fileReporte = Menu(menubar)
+
 
 menubar.add_cascade(label="Nuevo", command=new)
 menubar.add_cascade(label="Abrir",  command = openFile)
 menubar.add_cascade(label="Guardar", command = pruebaTexto)
 menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", command=analizar)
+menubar.add_cascade(label="Reportes",menu=fileReporte)
+fileReporte.add_cascade(label="Reporte HTML", command=reporteHtml)
+fileReporte.add_cascade(label="Reporte Graphviz")
 menubar.add_cascade(label="Salir", command=raiz.quit)
+
 
 
 #-------------------------------------------------
