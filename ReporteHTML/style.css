@@ -1,0 +1,32 @@
+body {
+    background-color: #E5E5E5;
+    padding: 0 20px 20px 20px;
+}
+
+h1 {
+    color: black;
+    font-size: 300%;
+    font-family: Arial;
+    text-align: center
+  }
+
+table{
+    background-color: white;
+    text-align: center;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td{
+    padding: 20px;
+    font-weight: bold;
+    font-size: 150%;
+}
+
+thead{
+    background-color: #0A749D;
+    border-bottom: solid 5px #0F362D;
+    color: white;
+    font-weight: bold;
+    font-size: 150%;
+}

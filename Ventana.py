@@ -87,20 +87,87 @@ def analizar():
             operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
             operacionesSintactico.arranque()
          
+
+
         #imprimo si tengo errore encontrados
         #---------------------------------------
         #recorrido de la lista
         if len(listaErroresRecibidos) == 0:
             areaTextoErrore.insert(INSERT,"No hay Errores lexico!!!")
+             #CREACION DEL ARCHIVO PARA EL REPORTE DE ERRORES
+            archivo = open("ReporteHTML\\ReporteErrores.html","w")
+            archivo.write("<html>\n")
+            archivo.write("<head>\n")
+            archivo.write("<title>  !Reporte de Errores Lexicos!  </title>\n")
+            archivo.write("</head>")
+            #*********TITULO***************
+            archivo.write("<h1> NO SE ECONTRARON ERROES LEXICOS </h1>\n")
+            #creacion del la tabla con los errores
+            archivo.write("<body>\n")
+            archivo.write("</body>\n")
+            archivo.write("</head>\n")
+            archivo.write("</html>\n")
+            archivo.close()
+
+        #IMPRESION DE ERRORE EN EL SGUNDO TXTBOX
         else:
             areaTextoErrore.delete("1.0",END+"-1c")
             areaTextoErrore.insert(INSERT,"Errores lexicos Encontrados!!!\n")
-            elemento = 0
-            for fila in listaErroresRecibidos:
-                for elemento in fila:
-                    areaTextoErrore.insert(INSERT,elemento)
-                    #print(elemento)
+
+            for fila in range(len(listaErroresRecibidos)):
+                areaTextoErrore.insert(INSERT,"No. "+listaErroresRecibidos[fila][0])
+                areaTextoErrore.insert(INSERT,"  Fila: "+listaErroresRecibidos[fila][0])
+                areaTextoErrore.insert(INSERT,"  Columna "+listaErroresRecibidos[fila][0])
+                areaTextoErrore.insert(INSERT,"  Error: "+listaErroresRecibidos[fila][0])
                 areaTextoErrore.insert(INSERT,"\n")
+ 
+
+
+            #CREACION DEL ARCHIVO PARA EL REPORTE DE ERRORES
+            archivo = open("ReporteHTML\\ReporteErrores.html","w")
+            archivo.write("<html>\n")
+            archivo.write("<head>\n")
+            archivo.write("<meta charset=\"UTF-8\" >\n")
+            archivo.write("<title>  !Reporte de Errores Lexicos!  </title>\n")
+            archivo.write("<link rel=\"stylesheet\" href=\"style.css\" >\n")
+            archivo.write("</head>")
+            archivo.write("<body>\n")
+            #*********TITULO***************
+            archivo.write("<h1> TABLA DE ERROERS LEXICOS </h1>\n")
+            #creacion del la tabla con los errores
+            archivo.write("<table border=\"1\">\n")
+            archivo.write("<thead>")
+            archivo.write("<td>")
+            archivo.write("No.")
+            archivo.write("</td>")
+            archivo.write("<td>")
+            archivo.write("Fila")
+            archivo.write("</td>")
+            archivo.write("<td>")
+            archivo.write("Columna")
+            archivo.write("</td>")
+            archivo.write("<td>")
+            archivo.write("Error")
+            archivo.write("</td>")
+            archivo.write("</thead>\n")
+            
+            #ELEMENTOS DE LA TABLA
+            for fila in range(len(listaErroresRecibidos)):
+                archivo.write("<tr>\n")   
+                for columna in range(len(listaErroresRecibidos[fila])):
+                    archivo.write("<td>")
+                    archivo.write(""+listaErroresRecibidos[fila][columna])
+                    archivo.write("</td>\n")
+
+                archivo.write("</tr>\n")
+            #*****************************
+
+            archivo.write("</table>\n")
+            #--------------------------------------
+            archivo.write("</body>\n")
+            archivo.write("</head>\n")
+            archivo.write("</html>\n")
+            archivo.close()
 #-------------------------------------------------------------------------
 
 #------------------------------------------------------------------------

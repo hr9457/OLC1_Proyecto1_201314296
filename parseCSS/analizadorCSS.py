@@ -10,7 +10,12 @@ class analizadorcss:
         self.token = ""
         self.listaErrores = []
         self.listaToken = []
-        self.palabrasReservadas = []
+        self.palabrasReservadas = ["color","border","text-align","font-weight","padding-left",
+        "line-height","margin-top","margin-left","display","top","float","min-width",
+        "background-color","Opacity","font-family","font-sieze","padding-right","padding",
+        "width","margin-right","margin","position","right","clear","max-height","background-image",
+        "background","font-style","font","padding-botton","display","height","margin-bottom","border-style",
+        "bottom","left","max-width","min-height","absolute","center","after","before","hover","url","content","rgba"]
 
     # metodo para saber si es una letra
     def isLetter(self,caracter):
@@ -39,7 +44,6 @@ class analizadorcss:
         or caracter == chr(46) # .
         or caracter == chr(58) # :
         or caracter == chr(59) # ;
-        or caracter == chr(61) # =
         or caracter == chr(123) # {
         or caracter == chr(125)): # }
             return True
@@ -47,13 +51,13 @@ class analizadorcss:
             return False
 
     # agreacion de token
-    def addToken(self,token):
-        self.listaToken.append(token)
+    def addToken(self,token,lexema):
+        self.listaToken.append([token,lexema])
 
     # error lexico
     def errorLexico(self,numero,fila,columna,token):
-        self.listaErrores.append(["No :"+str(numero),"  Fila: "+str(fila),
-        "  Columna: "+str(columna),"  Error: "+token])
+        self.listaErrores.append([""+str(numero),""+str(fila),
+        ""+str(columna),token])
 
 
     #automata
@@ -108,17 +112,19 @@ class analizadorcss:
 
                 # si viene un espacio en blanco
                 elif self.txtEntrada[puntero] == " ":
+                    self.addToken("carrito"," ")
                     self.columna += 1  
 
 
                 # si viene un tabulacion o un retorno de carro
                 elif (self.txtEntrada[puntero] == "\t"
                 or self.txtEntrada[puntero] == "\r"):
-                    pass
+                    self.addToken("carrito","\t")
 
                     
                 # si vien un salto de linea
                 elif self.txtEntrada[puntero] == "\n":
+                    self.addToken("carrito","\n")
                     self.columna = 0
                     self.fila += 1
 
@@ -138,7 +144,7 @@ class analizadorcss:
             #-------------------------------------------------------------
             #ESTADOS DE SIMBOLO ACEPTACION
             elif self.estado == 1:
-                self.addToken(self.token)
+                self.addToken("Tk_operador",self.token)
                 print("Token: "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -159,14 +165,29 @@ class analizadorcss:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 2
 
+                # si vien un guien en la cadena
+                elif self.txtEntrada[puntero] == chr(45): # -
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 2
+
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
-                    self.token = ""
-                    self.columna += 1
-                    self.estado = 0
-                    puntero -= 1
+                    #busqueda en la palabras reservadas
+                    if self.token in self.palabrasReservadas:
+                        self.addToken("Tk_reservada",self.token)
+                        print("RESERVADA :"+self.token)
+                        self.token = ""
+                        self.columna += 1
+                        self.estado = 0
+                        puntero -= 1
+
+                    else:    
+                        self.addToken("Tk_id",self.token)
+                        print("ID : "+self.token)
+                        self.token = ""
+                        self.columna += 1
+                        self.estado = 0
+                        puntero -= 1
 
 
             #-----------------------------------------------------------------
@@ -185,8 +206,8 @@ class analizadorcss:
                 
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_digito",self.token)
+                    print("Numero: "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -221,8 +242,8 @@ class analizadorcss:
 
                 #ACEPTACION
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_digito",self.token)
+                    print("NUMERO DECIMAL : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -234,13 +255,13 @@ class analizadorcss:
             #Estado para cadenas y/o aceptacion del simbolo "
             elif self.estado == 6:
                 #si viene una comilla simple "
-                self.addToken(self.token)
-                print("Token: "+self.token)
-                self.token = ""
-                self.columna += 1
+                #self.addToken(self.token)
+                #print("Token: "+self.token)
+                #self.token = ""
+                #self.columna += 1
                 if self.txtEntrada[puntero] == chr(34): # "
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 8
-                    puntero -= 1
 
                 else:
                     self.token += self.txtEntrada[puntero]
@@ -256,10 +277,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     #impresion del token
-                    self.addToken(self.token)
-                    print("Cadena: "+self.token)
-                    self.token = ""  
-                    self.columna += 1
+                    self.token += self.txtEntrada[puntero]
                     self.estado = 8
                     puntero -= 1
 
@@ -267,9 +285,8 @@ class analizadorcss:
             #aceptacion del simbolo " cierre de un string
             elif self.estado == 8:
                 # si viene comillas simples
-                self.token = self.txtEntrada[puntero]
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                self.addToken("Tk_string",self.token)
+                print("CADENA : "+self.token)
                 self.token = ""  
                 self.columna += 1
                 self.estado = 0
@@ -287,8 +304,8 @@ class analizadorcss:
 
                 #aceptacion
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_operador",self.token)
+                    print("OPERADOR : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -305,8 +322,8 @@ class analizadorcss:
 
                 #aceptacion
                 else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
+                    self.addToken("Tk_id",self.token)
+                    print("ID COLOR : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
@@ -319,16 +336,18 @@ class analizadorcss:
             #comentarios
             elif self.estado == 11:
                 # si viene un *
-                if self.txtEntrada[puntero] == chr(42):
+                if self.txtEntrada[puntero] == chr(42): # *
                     self.token += self.txtEntrada[puntero]
                     self.estado = 12
 
                 #aceptacion
-                else:
-                    self.addToken(self.token)
-                    print("Token: "+self.token)
-                    self.token = ""
+                else: # si no viene * erro para /
+                    self.token += self.txtEntrada[puntero]
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)  
+                    self.numeroError += 1
                     self.columna += 1
+                    self.token = ""
                     self.estado = 0
                     puntero -= 1
 
@@ -359,8 +378,8 @@ class analizadorcss:
 
             elif self.estado == 14:
                 #acepto el token
-                self.addToken(self.token)
-                print("Token: "+self.token)
+                self.addToken("Tk_comentario",self.token)
+                print("Comentario : "+self.token)
                 self.token = ""
                 self.columna += 1
                 self.estado = 0 

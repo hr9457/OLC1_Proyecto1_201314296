@@ -5,7 +5,7 @@ class parseJS:
         self.txtEntrada = txtEntrada
         self.estado = 0 # estado actual del automa
         # element token error
-        self.numeroError = 0 
+        self.numeroError = 1 
         self.fila = 0 # fila
         self.columna = 0 # columna
         self.token = "" # token
@@ -65,8 +65,8 @@ class parseJS:
 
     # error lexico
     def errorLexico(self,numero,fila,columna,token):
-        self.listaErrores.append(["No :"+str(numero),"  Fila: "+str(fila),
-        "  Columna: "+str(columna),"  Error: "+token])
+        self.listaErrores.append([""+str(numero),""+str(fila),
+        ""+str(columna),token])
 
 
 
@@ -87,7 +87,8 @@ class parseJS:
             if self.estado == 0:
                 # revision de de entrada en la cadena
                 # es una letra pasa al estado 1
-                if self.isLetter(self.txtEntrada[puntero]) == True:
+                if (self.isLetter(self.txtEntrada[puntero]) == True
+                or self.txtEntrada[puntero] == chr(95)):
                     self.token += self.txtEntrada[puntero]
                     self.estado = 1
 
@@ -124,16 +125,18 @@ class parseJS:
                 # movientos en el cursos
                 elif (self.txtEntrada[puntero] == ' '):
                     #ignoro paso al siguiente caracter
+                    self.addToken("carrito"," ")
                     self.columna += 1
                     self.estado = 0
 
                 # tabulacion
                 elif (self.txtEntrada[puntero] == '\t'
                 or self.txtEntrada[puntero] == '\r'):
-                    pass
+                    self.addToken("carrito","\t")
 
                 # salto de linea
                 elif self.txtEntrada[puntero] == '\n':
+                    self.addToken("carrito","\n")
                     self.fila += 1
                     self.columna = 0
                     self.estado = 0
