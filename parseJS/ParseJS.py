@@ -476,12 +476,24 @@ class parseJS:
             separacionArchivo = self.rutaSalida.split("output")
             print(""+separacionArchivo[1])
             carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
-            os.makedirs(carpetaDestino)
-            archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
-            #********************************************************
-            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
-            for fila in range(len(self.listaToken)):
-                archivoSalidaJS.write(""+self.listaToken[fila][1])
 
-            archivoSalidaJS.close()
+            #verificacion de la existencias de de las rutas
+            if os.path.isdir(carpetaDestino)==True:
+                archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+                archivoSalidaJS.close()
+            else:
+                #metodo para la creacion de archivos
+                os.makedirs(carpetaDestino)#metodo que crea carpetas
+                archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+                archivoSalidaJS.close()
 
