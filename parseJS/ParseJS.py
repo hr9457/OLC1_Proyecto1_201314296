@@ -1,3 +1,6 @@
+import os
+import io
+
 class parseJS:
 
     # metodo constructor
@@ -14,6 +17,8 @@ class parseJS:
         self.listaReservadas = ["var","if","else","for","do","while","console",
         "continue","break","return","false","true","this","constructor",
         "Math","function","class"] # lista de palabras reservadas
+        #ruta de salida para el archivo en limpio
+        self.rutaSalida  =  ""
 
 
 
@@ -452,6 +457,31 @@ class parseJS:
 
 
 
+        self.destino()
         # retorno de la lista con los error encontrados en el archivo
         return self.listaErrores
+        
+
+
+
+    #----------------------------------------------------------------------------------------------
+    #metodo para la creacion de la carpet destino para el archivo de JS
+    def destino(self):
+        if len(self.listaToken) == 0:
+            print("---->No hay elementos en la lista")
+        else:
+            #guardo la ruta 
+            self.rutaSalida = self.listaToken[0][1]
+            print("---------->"+self.rutaSalida)
+            separacionArchivo = self.rutaSalida.split("output")
+            print(""+separacionArchivo[1])
+            carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
+            os.makedirs(carpetaDestino)
+            archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
+            #********************************************************
+            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+            for fila in range(len(self.listaToken)):
+                archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+            archivoSalidaJS.close()
 

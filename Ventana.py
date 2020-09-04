@@ -116,9 +116,9 @@ def analizar():
 
             for fila in range(len(listaErroresRecibidos)):
                 areaTextoErrore.insert(INSERT,"No. "+listaErroresRecibidos[fila][0])
-                areaTextoErrore.insert(INSERT,"  Fila: "+listaErroresRecibidos[fila][0])
-                areaTextoErrore.insert(INSERT,"  Columna "+listaErroresRecibidos[fila][0])
-                areaTextoErrore.insert(INSERT,"  Error: "+listaErroresRecibidos[fila][0])
+                areaTextoErrore.insert(INSERT,"  Fila: "+listaErroresRecibidos[fila][1])
+                areaTextoErrore.insert(INSERT,"  Columna "+listaErroresRecibidos[fila][2])
+                areaTextoErrore.insert(INSERT,"  Error: "+listaErroresRecibidos[fila][3])
                 areaTextoErrore.insert(INSERT,"\n")
  
 
