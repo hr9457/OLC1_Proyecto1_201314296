@@ -20,6 +20,7 @@ class analizadorcss:
         "width","margin-right","margin","position","right","clear","max-height","background-image",
         "background","font-style","font","padding-botton","display","height","margin-bottom","border-style",
         "bottom","left","max-width","min-height","absolute","center","after","before","hover","url","content","rgba"]
+        self.listadoBitacora = []
 
     # metodo para saber si es una letra
     def isLetter(self,caracter):
@@ -66,6 +67,16 @@ class analizadorcss:
 
     #automata
     def automata(self):
+        #*********************************************
+        # BANDERAS
+        estadoSimbolos = True
+        estadoLetras = True
+        estadoDigito = True
+        estadoDecimal = True
+        estadoString = True
+        estadoColor = True
+        estadoComentario = True
+        #**********************************************
         #puntero para saber parte del texto
         puntero = 0
 
@@ -154,6 +165,11 @@ class analizadorcss:
                 self.columna += 1
                 self.estado = 0
                 puntero -= 1
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoSimbolos == True:
+                    self.listadoBitacora.append("q0 ---S---> q1\n")
+                    estadoSimbolos = False
 
 
             #--------------------------------------------------------------
@@ -194,6 +210,13 @@ class analizadorcss:
                         puntero -= 1
 
 
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoLetras == True:
+                    self.listadoBitacora.append("q0 ---L---> q2 (L|D)\n")
+                    estadoLetras = False
+
+
             #-----------------------------------------------------------------
             #ESTADO PARA NUMEROS Y ACEPTACION
             elif self.estado == 3:
@@ -216,6 +239,13 @@ class analizadorcss:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+
+            
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoDigito == True:
+                    self.listadoBitacora.append("q0 ---D---> q3 (D)\n")
+                    estadoDigito = False
                 
 
             #punto decimal
@@ -252,6 +282,12 @@ class analizadorcss:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoDecimal == True:
+                    self.listadoBitacora.append("q0 --D--> q3(D) --.--> q4 --D--> q5 (D) \n")
+                    estadoDecimal = False
 
 
 
@@ -294,6 +330,12 @@ class analizadorcss:
                 self.token = ""  
                 self.columna += 1
                 self.estado = 0
+
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoString == True:
+                    self.listadoBitacora.append("q0 --\"--> q6 --T--> q7(T)  --\"--> q8 \n")
+                    estadoString = False
                 
             
 
@@ -332,6 +374,13 @@ class analizadorcss:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+
+
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoColor == True:
+                    self.listadoBitacora.append("q0 ---#---> q9 ---L|D---> q10(L|D)\n")
+                    estadoColor = False
 
 
 
@@ -387,7 +436,13 @@ class analizadorcss:
                 self.token = ""
                 self.columna += 1
                 self.estado = 0 
-                puntero -= 1              
+                puntero -= 1       
+                
+                #********************************************
+                #agreacion de recorrido del automata
+                if estadoComentario == True:
+                    self.listadoBitacora.append("q0 --/--> q11 --*--> q12(T) --*--> q13 --/-->q14\n")
+                    estadoComentario = False       
 
 
 
@@ -400,7 +455,7 @@ class analizadorcss:
         #self.destino()
         #termina el while y retorno
         #retorno los erros que si existieran
-        return self.listaErrores
+        return self.listaErrores,self.listadoBitacora
         #fin del metodo del automo
 
 

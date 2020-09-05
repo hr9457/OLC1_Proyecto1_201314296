@@ -17,6 +17,7 @@ from parseOperaciones.analizadorSintactico import analizadoSintactico # analizad
 tipoArchivo = ""
 nombreArchivo = "" 
 
+
 #--------------------------------------------------------------------
 def new():
     global areaTexto
@@ -61,6 +62,7 @@ def pruebaTexto():
 #------------------------------------------------------------------------
 def analizar():    
     
+    listadoBitacoraCSS = []
     listaTokenRecibidos = []
     listaErroresRecibidos = []
     textoCargado = "" 
@@ -79,14 +81,22 @@ def analizar():
         #borro si hay algo anteriro en el area de textoErrores
         areaTextoErrore.delete("1.0",END+"-1c") 
         #verifico el archivo Cargado
+        #************************************
+        #ARCHIVO JS
         if tipoArchivo == "js":
             analizadorjs = parseJS(textoCargado,nombreArchivo)       
             listaErroresRecibidos = analizadorjs.automata()
+        #************************************
+        #ARCHIVO CSS
         elif tipoArchivo == "css":
             css = analizadorcss(textoCargado,nombreArchivo)
-            listaErroresRecibidos = css.automata()
+            listaErroresRecibidos,listadoBitacoraCSS = css.automata()
+        #************************************
+        #ARCHIVO HTML
         elif tipoArchivo == "html":
             pass
+        #************************************
+        #ARCHIVO RMT
         elif tipoArchivo == "rmt":
             operacones = analizadorOperaciones(textoCargado)            
             # multiple return = erroes lexicos y los token aceptados
@@ -94,7 +104,7 @@ def analizar():
             #envio y analisis sintactico
             operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
             operacionesSintactico.arranque()
-         
+        
 
 
         #imprimo si tengo errore encontrados
@@ -102,7 +112,19 @@ def analizar():
         #recorrido de la lista
         if len(listaErroresRecibidos) == 0:
             areaTextoErrore.insert(INSERT,"No hay Errores lexico!!!")
-             #CREACION DEL ARCHIVO PARA EL REPORTE DE ERRORES
+
+            #***********************************************
+            #recorrido de la bitacora de css
+            if len(listadoBitacoraCSS) == 0:
+                pass
+            else:
+                areaTextoErrore.insert(INSERT,"\n")
+                areaTextoErrore.insert(INSERT,"*******************************\n")
+                areaTextoErrore.insert(INSERT,"**RECORRIDOS EN EL AUTOMATA CSS**\n")
+                for filaBitacora in range(len(listadoBitacoraCSS)):
+                    areaTextoErrore.insert(INSERT,""+listadoBitacoraCSS[filaBitacora]+"\n")
+
+            #CREACION DEL ARCHIVO PARA EL REPORTE DE ERRORES
             archivo = open("ReporteHTML\\ReporteErrores.html","w")
             archivo.write("<html>\n")
             archivo.write("<head>\n")
@@ -117,18 +139,34 @@ def analizar():
             archivo.write("</html>\n")
             archivo.close()
 
+
+
+
         #IMPRESION DE ERRORE EN EL SGUNDO TXTBOX
         else:
             areaTextoErrore.delete("1.0",END+"-1c")
             areaTextoErrore.insert(INSERT,"Errores lexicos Encontrados!!!\n")
 
+            #*********************************************
+            #recorrido de la lista de errores de css
             for fila in range(len(listaErroresRecibidos)):
                 areaTextoErrore.insert(INSERT,"No. "+listaErroresRecibidos[fila][0])
                 areaTextoErrore.insert(INSERT,"  Fila: "+listaErroresRecibidos[fila][1])
                 areaTextoErrore.insert(INSERT,"  Columna "+listaErroresRecibidos[fila][2])
                 areaTextoErrore.insert(INSERT,"  Error: "+listaErroresRecibidos[fila][3])
                 areaTextoErrore.insert(INSERT,"\n")
- 
+
+            #***********************************************
+            #recorrido de la bitacora de css
+            if len(listadoBitacoraCSS) == 0:
+                pass
+            else:
+                areaTextoErrore.insert(INSERT,"\n")
+                areaTextoErrore.insert(INSERT,"*******************************\n")
+                areaTextoErrore.insert(INSERT,"**RECORRIDOS EN EL AUTOMATA CSS**\n")
+                for filaBitacora in range(len(listadoBitacoraCSS)):
+                    areaTextoErrore.insert(INSERT,""+listadoBitacoraCSS[filaBitacora]+"\n")
+
 
 
             #CREACION DEL ARCHIVO PARA EL REPORTE DE ERRORES
