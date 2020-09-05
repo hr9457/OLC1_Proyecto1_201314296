@@ -452,7 +452,7 @@ class analizadorcss:
             puntero += 1
 
 
-        #self.destino()
+        self.destino()
         #termina el while y retorno
         #retorno los erros que si existieran
         return self.listaErrores,self.listadoBitacora
@@ -472,9 +472,11 @@ class analizadorcss:
             print("---------->"+self.rutaSalida)
             separacionArchivo = self.rutaSalida.split("output")
             print(""+separacionArchivo[1])
-            carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
+            CarpetasdelArchivo = ""+separacionArchivo[1]
+            archivoSinCierre = CarpetasdelArchivo.split("*")
+            print(""+archivoSinCierre[0])
+            carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0]
 
-            '''
             #verificacion de la existencias de de las rutas
             if os.path.isdir(carpetaDestino)==True:
                 archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".css","w")
@@ -495,5 +497,5 @@ class analizadorcss:
                     archivoSalidaJS.write(""+self.listaToken[fila][1])
 
                 archivoSalidaJS.close()
-            '''
+            
 
