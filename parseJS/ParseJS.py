@@ -1,11 +1,13 @@
 import os
 import io
+import subprocess
 
 class parseJS:
 
     # metodo constructor
-    def __init__(self,txtEntrada):
+    def __init__(self,txtEntrada,nombreArchivo):
         self.txtEntrada = txtEntrada
+        self.nombreArchivo = nombreArchivo
         self.estado = 0 # estado actual del automa
         # element token error
         self.numeroError = 1 
@@ -80,6 +82,21 @@ class parseJS:
     # metodo para analizar token por token
     # verificacion de la cadena
     def automata(self):
+        #************************************
+        #BANDERAS
+        estadoLetras = True
+        estadoDigitos = True
+        estadoDecimal = True
+        estadoSimbolos = True
+        estadoComentarioUnilinea = True
+        #*************************************
+        #ESCRITURA DEL ARCHIVO DOT
+        archivoDot = open("ReporteGrafico\\grafo.dot","w")
+        archivoDot.write("digraph automa {\n")
+        archivoDot.write("rankdir=LR;\n")
+        archivoDot.write("node [shape = circle];\n")
+        archivoDot.write("nodoRaiz[label=\"q0\"];\n")
+        #*************************************
         # puntero indica que parte de la cadena vamos
         puntero = 0
 
@@ -196,6 +213,13 @@ class parseJS:
                         self.columna += 1
                         self.estado = 0
                         puntero -= 1
+                    #******************************************
+                    #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                    if estadoLetras == True:
+                        archivoDot.write("nodoLetra[shape=doublecircle,label=\"q1\"];\n")
+                        archivoDot.write("nodoRaiz->nodoLetra[label=\"L|_\"];\n")
+                        archivoDot.write("nodoLetra->nodoLetra[label=\"L|D|_\"];\n")
+                        estadoLetras = False
 
 
             #--------------------------------------------------------------
@@ -222,6 +246,13 @@ class parseJS:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+                    #******************************************
+                    #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                    if estadoDigitos == True:
+                        archivoDot.write("nodoDigito[shape=doublecircle,label=\"q2\"];\n")
+                        archivoDot.write("nodoRaiz->nodoDigito[label=\"D\"];\n")
+                        archivoDot.write("nodoDigito->nodoDigito[label=\"D\"];\n")
+                        estadoDigitos = False
 
 
             
@@ -239,6 +270,13 @@ class parseJS:
                 self.columna += 1
                 self.estado = 0
                 puntero -= 1
+            
+                #******************************************
+                #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                if estadoSimbolos == True:
+                    archivoDot.write("nodoSimbolo [shape=doublecircle, label=\"q3\"];\n")
+                    archivoDot.write("nodoRaiz->nodoSimbolo[label=\"S\"];\n")
+                    estadoSimbolos = False
 
 
 
@@ -286,6 +324,16 @@ class parseJS:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+                #******************************************
+                #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                if estadoComentarioUnilinea == True:
+                    archivoDot.write("nodoSlash [shape=circle, label=\"q4\"];\n")
+                    archivoDot.write("nodoTodillo [shape=doublecircle, label=\"q5\"];\n")
+
+                    archivoDot.write("nodoRaiz->nodoSlash [label=\" Slash\ \"];\n")
+                    archivoDot.write("nodoSlash->nodoTodillo [label=\" Slash\ \"];\n")
+                    archivoDot.write("nodoTodillo->nodoTodillo [label=\" T \"];\n")
+                    estadoComentarioUnilinea = False  
 
 
             #---------------------------------------------------------------
@@ -449,14 +497,28 @@ class parseJS:
                     self.columna += 1
                     self.estado = 0
                     puntero -= 1
+                    #******************************************
+                    #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                    if estadoDecimal == True:
+                        archivoDot.write("nodoPunto[shape=circle,label=\"q15\"];\n")
+                        archivoDot.write("nodoDecimal[shape=doublecircle,label=\"q16\"];\n")
+                        archivoDot.write("nodoDigito->nodoPunto[label=\".\"]\n")
+                        archivoDot.write("nodoPunto->nodoDecimal[label=\"D\"]\n")
+                        archivoDot.write("nodoDecimal->nodoDecimal[label=\"D\"]\n")
+                        estadoDecimal = False
 
             
             #pasa al siguiente caracter
             #y sigue con ele while
             puntero += 1
 
-
-
+        #*********************************************************
+        archivoDot.write("}\n")
+        archivoDot.close() # cierre del archivo del automa
+        #*********************************************************
+        comandoConversion = "dot.exe -Tpng ReporteGrafico\\grafo.dot -o  ReporteGrafico\\automataJS.png"
+        subprocess.Popen(comandoConversion,shell=True)
+        #*********************************************************
         self.destino()
         # retorno de la lista con los error encontrados en el archivo
         return self.listaErrores
@@ -479,7 +541,7 @@ class parseJS:
 
             #verificacion de la existencias de de las rutas
             if os.path.isdir(carpetaDestino)==True:
-                archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
                 #********************************************************
                 #ESCIRTURA PARA EL ARCHIVO DE SALIDA
                 for fila in range(len(self.listaToken)):
@@ -489,7 +551,7 @@ class parseJS:
             else:
                 #metodo para la creacion de archivos
                 os.makedirs(carpetaDestino)#metodo que crea carpetas
-                archivoSalidaJS = open(""+carpetaDestino+"\\Salida.js","w")
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
                 #********************************************************
                 #ESCIRTURA PARA EL ARCHIVO DE SALIDA
                 for fila in range(len(self.listaToken)):

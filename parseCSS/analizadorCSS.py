@@ -1,8 +1,12 @@
+import os
+import io
+
 class analizadorcss:
     
     #contructor
-    def __init__(self,txtEntrada):
+    def __init__(self,txtEntrada,nombreArchivo):
         self.txtEntrada = txtEntrada
+        self.nombreArchivo = nombreArchivo
         self.estado = 0
         self.numeroError = 1
         self.fila = 0
@@ -393,6 +397,7 @@ class analizadorcss:
             puntero += 1
 
 
+        #self.destino()
         #termina el while y retorno
         #retorno los erros que si existieran
         return self.listaErrores
@@ -400,4 +405,40 @@ class analizadorcss:
 
 
 
+
+    #----------------------------------------------------------------------------------------------
+    #metodo para la creacion de la carpet destino para el archivo de JS
+    def destino(self):
+        if len(self.listaToken) == 0:
+            print("---->No hay elementos en la lista")
+        else:
+            #guardo la ruta 
+            self.rutaSalida = self.listaToken[0][1]
+            print("---------->"+self.rutaSalida)
+            separacionArchivo = self.rutaSalida.split("output")
+            print(""+separacionArchivo[1])
+            carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
+
+            '''
+            #verificacion de la existencias de de las rutas
+            if os.path.isdir(carpetaDestino)==True:
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".css","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+                archivoSalidaJS.close()
+
+            else:
+                #metodo para la creacion de archivos
+                os.makedirs(carpetaDestino)#metodo que crea carpetas
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".css","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+                archivoSalidaJS.close()
+            '''
 

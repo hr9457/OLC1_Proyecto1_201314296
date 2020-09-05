@@ -1,6 +1,7 @@
 import io
 import os
 import subprocess
+from pathlib import Path
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -14,6 +15,7 @@ from parseOperaciones.analizadorSintactico import analizadoSintactico # analizad
 #-------------------------------------------------------------------
 #saber que tipo de archivo fue el de apertura
 tipoArchivo = ""
+nombreArchivo = "" 
 
 #--------------------------------------------------------------------
 def new():
@@ -24,21 +26,25 @@ def new():
 
 #----------------------------------------------------------------------
 def openFile():    
-    global areaTexto
-    global areaTextoErrore
-    global tipoArchivo
+    global areaTexto # are de texto principal
+    global areaTextoErrore # area de texto de bitacora
+    global tipoArchivo #tipo de archiov de apertura 
+    global nombreArchivo #nombre del archivo de entrada
     areaTexto.delete("1.0",END+"-1c")
     areaTextoErrore.delete("1.0",END+"-1c")
     filename = filedialog.askopenfilename(title="Busqueda",
-    filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))    
+    filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))  
+    #****NOMBRE DEL ARCHIVO
+    nombreArchivo = Path(filename).stem
+    #  
     txt_file = open(""+filename,'r',encoding='utf-8')
     lectura = txt_file.read()
     areaTexto.insert(END,lectura)
     txt_file.close()
     archivoSeperado = filename.split(".")
     tipoArchivo = archivoSeperado[1]
-    areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo)
-
+    areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo+"\n")
+    #areaTextoErrore.insert(INSERT,"Nombre del archivo-> "+nombreArchivo)
 
 #pruebapara colo de texto para el pintado de las letras
 #------------------------------------------------------------------------
@@ -74,10 +80,10 @@ def analizar():
         areaTextoErrore.delete("1.0",END+"-1c") 
         #verifico el archivo Cargado
         if tipoArchivo == "js":
-            analizadorjs = parseJS(textoCargado)       
+            analizadorjs = parseJS(textoCargado,nombreArchivo)       
             listaErroresRecibidos = analizadorjs.automata()
         elif tipoArchivo == "css":
-            css = analizadorcss(textoCargado)
+            css = analizadorcss(textoCargado,nombreArchivo)
             listaErroresRecibidos = css.automata()
         elif tipoArchivo == "html":
             pass
@@ -189,6 +195,14 @@ def reporteHtml():
 #--------------------------------------------------------------------------
 
 
+# APERTURA DE REPORTE GRAPHVIZ
+#--------------------------------------------------------------------------
+def reporteAutomata():
+    comandoApertura ='ReporteGrafico\\automataJS.png'
+    subprocess.Popen(comandoApertura,shell=True)
+#--------------------------------------------------------------------------
+
+
 # creacion de la raiz
 raiz=Tk()
 raiz.config(background="#282a36") 
@@ -228,7 +242,7 @@ menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Reportes",menu=fileReporte)
 fileReporte.add_cascade(label="Reporte HTML", command=reporteHtml)
-fileReporte.add_cascade(label="Reporte Graphviz")
+fileReporte.add_cascade(label="Reporte Graphviz",command=reporteAutomata)
 menubar.add_cascade(label="Salir", command=raiz.quit)
 
 

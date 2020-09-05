@@ -1,0 +1,23 @@
+digraph automa {
+rankdir=LR;
+node [shape = circle];
+nodoRaiz[label="q0"];
+nodoSlash [shape=circle, label="q4"];
+nodoTodillo [shape=doublecircle, label="q5"];
+nodoRaiz->nodoSlash [label=" Slash\ "];
+nodoSlash->nodoTodillo [label=" Slash\ "];
+nodoTodillo->nodoTodillo [label=" T "];
+nodoLetra[shape=doublecircle,label="q1"];
+nodoRaiz->nodoLetra[label="L|_"];
+nodoLetra->nodoLetra[label="L|D|_"];
+nodoSimbolo [shape=doublecircle, label="q3"];
+nodoRaiz->nodoSimbolo[label="S"];
+nodoDigito[shape=doublecircle,label="q2"];
+nodoRaiz->nodoDigito[label="D"];
+nodoDigito->nodoDigito[label="D"];
+nodoPunto[shape=circle,label="q15"];
+nodoDecimal[shape=doublecircle,label="q16"];
+nodoDigito->nodoPunto[label="."]
+nodoPunto->nodoDecimal[label="D"]
+nodoDecimal->nodoDecimal[label="D"]
+}
