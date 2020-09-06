@@ -260,7 +260,7 @@ raiz.resizable(0,0)
 
 # que se contraiga o se expanda los elementos de la columna 2
 raiz.columnconfigure(1,weight=1)
-#raiz.rowconfigure(1, weight=1)
+raiz.columnconfigure(0, weight=1)
 
 # menubar
 menubar = Menu(raiz)
@@ -288,7 +288,7 @@ menubar.add_cascade(label="Salir", command=raiz.quit)
 #-------------------------------------------------
 LineasTexto = Text(raiz)  
 LineasTexto.config(width=3,height=20,font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
-LineasTexto.grid(row=0,column=0)
+LineasTexto.grid(row=0,column=0,sticky="ns")
 # list box para mostrar las filas
 #listaBox = Listbox(raiz)
 #listaBox.pack()
