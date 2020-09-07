@@ -87,8 +87,14 @@ class AnalizadorHTML:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 1
 
-                else:
+
+                elif self.isMoveInsert(self.txtEntrada[puntero])==True:
                     pass
+
+
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 8
 
 
 
@@ -106,6 +112,16 @@ class AnalizadorHTML:
                     #paso al analizador interno de etiquetas
                     self.token += self.txtEntrada[puntero]
                     self.estado = 2
+
+
+                #si viene un signo  / para el cierre de etiqueta
+                elif self.txtEntrada[puntero] == chr(47): # /
+                    # aceptamos el token <
+                    self.addToken("Tk_operador",self.token)
+                    print("SIGNO: "+self.token)
+                    self.token = "" 
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 9
 
 
                 # si viene una signo de cierre >
@@ -133,7 +149,7 @@ class AnalizadorHTML:
                 elif self.txtEntrada[puntero] == chr(34): # ""
                     if self.token != "":
                         #acepto la cadena
-                        if self.token in self.palabrasReservadas:
+                        if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
@@ -153,7 +169,7 @@ class AnalizadorHTML:
                 elif self.txtEntrada[puntero]==chr(61): # =
                     if self.token != "":
                         #acepto la cadena
-                        if self.token in self.palabrasReservadas:
+                        if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
@@ -173,7 +189,7 @@ class AnalizadorHTML:
                 elif self.isMoveInsert(self.txtEntrada[puntero])==True:
                     if self.token != "":
                         #acepto la cadena
-                        if self.token in self.palabrasReservadas:
+                        if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
@@ -192,7 +208,7 @@ class AnalizadorHTML:
                 elif self.txtEntrada[puntero]==chr(62):
                     if self.token != "":
                         #acepto la cadena
-                        if self.token in self.palabrasReservadas:
+                        if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
@@ -272,6 +288,109 @@ class AnalizadorHTML:
                 puntero -= 1 
 
 
+
+
+            #*****************************************************************
+            # cadenas de texto en html
+            elif self.estado == 8:
+                # mientra sea diferente de < posible etiqueta
+                if self.txtEntrada[puntero] != chr(60):
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 8
+
+                # si viene una <LD
+                elif (self.txtEntrada[puntero] == chr(60)
+                and self.isLetter(self.txtEntrada[puntero+1])):
+                    self.addToken("otro",self.token)
+                    print("TEXTO: "+self.token)
+                    self.token = ""
+                    self.estado = 1
+                    self.token+=self.txtEntrada[puntero]
+                    puntero -= 1
+
+
+                # si viene una </
+                elif (self.txtEntrada[puntero] == chr(60)
+                and self.txtEntrada[puntero+1] == chr(47)):
+                    self.addToken("otro",self.token)
+                    print("TEXTO: "+self.token)
+                    self.token = ""
+                    self.estado = 1
+                    self.token+=self.txtEntrada[puntero]
+                    puntero -= 1
+
+
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 8
+
+
+
+
+
+
+            #---------------------------------------------------------------
+            # entrada para una etiqueta de cierre
+            elif self.estado == 9:
+                # si viene una lentra en la cadena
+                if self.isLetter(self.txtEntrada[puntero])==True:
+                    # aceptamos el token /
+                    self.addToken("Tk_operador",self.token)
+                    print("SIGNO: "+self.token)
+                    self.token = "" 
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 10
+
+                else:
+                    pass
+
+
+
+
+            elif self.estado == 10:
+                # si viene una letra en la cadena
+                if self.isLetter(self.txtEntrada[puntero]) == True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 10
+
+
+                # si viene una digito 
+                elif self.isNumber(self.txtEntrada[puntero]) == True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 10
+
+
+                # si viene una etiqueta de cierre >
+                elif self.token != "":
+                    #acepto la cadena
+                    if self.token.lower() in self.palabrasReservadas:
+                        self.addToken("Tk_reservada",self.token)
+                        print("PALABRA RESERVADA : "+self.token)
+                        self.token = ""                        
+                    else:
+                        self.addToken("Tk_id",self.token)
+                        print("ID : "+self.token)
+                        self.token = ""
+
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 11
+
+
+                else:
+                    pass
+
+
+
+
+            #---------------------------------------------------------------
+            # aceptacion para una etiqueta de cierre
+            elif self.estado == 11:
+                #aceptamos 
+                self.addToken("Tk_operador",self.token)
+                print("SIGNO : "+self.token)
+                self.token = "" 
+                self.estado = 0
+                puntero -= 1 
 
 
 
