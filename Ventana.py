@@ -10,6 +10,7 @@ from parseJS.ParseJS import parseJS # analizador para javaScript
 from parseCSS.analizadorCSS import analizadorcss # analizador para css
 from parseOperaciones.analizadorOP import analizadorOperaciones # analizador lexico para operaciones
 from parseOperaciones.analizadorSintactico import analizadoSintactico # analizador sintatico op
+from parseHTML.AnalizadorHTML import AnalizadorHTML # analizador lexico del html
 
 
 #-------------------------------------------------------------------
@@ -94,7 +95,8 @@ def analizar():
         #************************************
         #ARCHIVO HTML
         elif tipoArchivo == "html":
-            pass
+            html = AnalizadorHTML(textoCargado,nombreArchivo)
+            html.automata()
         #************************************
         #ARCHIVO RMT
         elif tipoArchivo == "rmt":

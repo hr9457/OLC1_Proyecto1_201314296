@@ -10,8 +10,13 @@ class AnalizadorHTML:
         self.fila = 0
         self.columna = 0
         self.token = ""
+        self.etiqueta =  ""
+        self.cierreEtiqueta = ""
         self.listaErrores = []
         self.listaToken = []
+        self.palabrasReservadas = ["html","head","title","body","h1","h2","h3","h4","h5","h6",
+        "p","br","img","src","a","href","ul","li","p","style","table","border","caption","tr",
+        "td","table","colgroup","col","thed","tbody","tfoot"]
 
 
     # metodo para saber si es una letra
@@ -37,6 +42,17 @@ class AnalizadorHTML:
         else:
             return False
 
+
+    # movimiento del carrito en el texto
+    def isMoveInsert(self,caracter):
+        if (caracter == " "
+        or caracter == "\n"
+        or caracter == "\t"
+        or caracter == "\r"):
+            return True
+        else:
+            return False
+
     # agreacion de token
     def addToken(self,token,lexema):
         self.listaToken.append([token,lexema])
@@ -47,7 +63,218 @@ class AnalizadorHTML:
         ""+str(columna),token])
 
 
+
+
+
     #*************************************************************
     #automata
     def automata(self):
+
+        #puntero para recorrer caracter por caracter la cadena
         puntero = 0
+
+        #ciclo hacer para recoorrer todo la cadena de texto
+        while puntero < len(self.txtEntrada):
+
+
+
+            #ESTADO 0 
+            # ESTADO DE INICIO DEL AUTOMA
+            if self.estado == 0:
+
+                # apertura de comentario | etiqueta 
+                if self.txtEntrada[puntero] == chr(60): # <
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 1
+
+                else:
+                    pass
+
+
+
+
+
+            #********************************************************************
+            # APERTURA DE ETIQUETA
+            elif self.estado == 1:
+                #si viene una letra 
+                if self.isLetter(self.txtEntrada[puntero])==True:
+                    #acepto el token de <
+                    self.addToken("Tk_operador",self.token)
+                    print("SIGNO: "+self.token)
+                    self.token = ""                    
+                    #paso al analizador interno de etiquetas
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 2
+
+
+                # si viene una signo de cierre >
+                else:
+                    pass
+
+
+
+
+
+
+            elif self.estado == 2:
+                # si en la cadena viene una letra
+                if self.isLetter(self.txtEntrada[puntero])==True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 2
+
+                # si en la cadena viene un numero
+                elif self.isNumber(self.txtEntrada[puntero])==True:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 2
+
+
+                # si vie una cadena de texto dentro de la etiqueta
+                elif self.txtEntrada[puntero] == chr(34): # ""
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+                        
+                    #********************************************
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 5
+
+
+
+
+                # si viene un sigo de igualdad en la cadena
+                elif self.txtEntrada[puntero]==chr(61): # =
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+                        
+                    #********************************************
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 4
+
+
+
+
+                # si viene un moviento en puntero antes del cierre de la etiqueta
+                elif self.isMoveInsert(self.txtEntrada[puntero])==True:
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+                    else:
+                        pass
+
+                    self.estado = 2
+
+
+
+                # si en la cadena viene >
+                elif self.txtEntrada[puntero]==chr(62):
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+
+                    else:
+                        pass
+
+                        
+                    #********************************************
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 3
+
+
+
+
+
+
+            #*********************************************************************
+            # CIERRE DE ETIQUETA
+            elif self.estado == 3:
+                self.addToken("Tk_operador",self.token)
+                print("SIGNO : "+self.token)
+                self.token = ""                    
+                self.columna += 1
+                self.estado = 0
+                puntero -= 1                 
+
+
+
+            elif self.estado == 4:
+                self.addToken("Tk_operador",self.token)
+                print("SIGNO : "+self.token)
+                self.token = ""                    
+                self.columna += 1
+                self.estado = 2
+                puntero -= 1  
+
+
+
+
+
+            elif self.estado == 5:
+                # si vienen unas comillas simples en la cadenas
+                if self.txtEntrada[puntero] == chr(34): # ""
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 7
+                
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 6
+
+
+
+            elif self.estado == 6:
+                #acepto todo en la cadena mientras no vengan las commillas simples
+                if self.txtEntrada[puntero] != chr(34): # ""
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 6
+
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 7
+
+
+
+            #*************************************************************
+            # aceptacion del string
+            elif self.estado == 7:
+                self.addToken("Tk_string",self.token)
+                print("CADENA : "+self.token)
+                self.token = "" 
+                self.estado = 2
+                puntero -= 1 
+
+
+
+
+
+            #movimiento del puntero
+            puntero += 1
+            # fin del ciclo while
