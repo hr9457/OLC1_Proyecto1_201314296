@@ -124,9 +124,10 @@ class AnalizadorHTML:
                     self.estado = 9
 
 
-                # si viene una signo de cierre >
+                # en caso contrario no es una etiqueta
                 else:
-                    pass
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 8
 
 
 
@@ -306,7 +307,7 @@ class AnalizadorHTML:
                     self.token = ""
                     self.estado = 1
                     self.token+=self.txtEntrada[puntero]
-                    puntero -= 1
+                    #puntero -= 1
 
 
                 # si viene una </
@@ -317,7 +318,7 @@ class AnalizadorHTML:
                     self.token = ""
                     self.estado = 1
                     self.token+=self.txtEntrada[puntero]
-                    puntero -= 1
+                    #puntero -= 1
 
 
                 else:

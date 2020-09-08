@@ -261,8 +261,9 @@ raiz.geometry("900x660+100+0")
 raiz.resizable(0,0)
 
 # que se contraiga o se expanda los elementos de la columna 2
-raiz.columnconfigure(1,weight=1)
-raiz.columnconfigure(0, weight=1)
+
+#raiz.columnconfigure(0, weight=1)
+raiz.columnconfigure(1,weight=2)
 
 # menubar
 menubar = Menu(raiz)
@@ -299,21 +300,37 @@ LineasTexto.grid(row=0,column=0,sticky="ns")
 #listaBox.grid(row=0,column=0,sticky="ns")
 
 
-#scrooll bar
-scrollbar = Scrollbar(raiz, orient=VERTICAL)
-scrollbar.grid(row=0,column=2,sticky="ns")
+
 
 #--------------------------------------------------
 # segundo scrollbar para texto 
-scrollbarX = Scrollbar(raiz, orient=HORIZONTAL)
-scrollbarX.grid(row=1,column=1,sticky="ew")
+#scrooll bar
+scrollbarY = Scrollbar(raiz, orient=VERTICAL)
+scrollbarY.grid(row=0,column=2,sticky="ns")
+
+
+#scrollbarX = Scrollbar(raiz, orient=HORIZONTAL)
+#scrollbarX.grid(row=1,column=1,sticky="ew")
+
 
 
 # area de texto para mostar el texto a analizar
 areaTexto = Text(raiz)        
-areaTexto.config(height=20,xscrollcommand=scrollbarX.set,yscrollcommand=scrollbar.set,
+areaTexto.config(height=20, width = 10,
 font=("Consolas",14),borderwidth=0,background="#282a36",fg='White',selectbackground="#779ECB"
-,insertbackground='white')
+,insertbackground='white',wrap="none")
+# posicion en la matriz y que se expanda en los cuatro puntos cardinales
+areaTexto.grid(row=0,column=1,sticky="ew")
+
+#config del funcion scrooll
+scrollbarY.config(command=areaTexto.yview)
+areaTexto.config(yscrollcommand=scrollbarY.set)
+
+scrollbarX = Scrollbar(raiz,orient=HORIZONTAL)
+scrollbarX.grid(row=1,column=1,sticky="ew")
+scrollbarX.config(command=areaTexto.xview)
+areaTexto.config(xscrollcommand=scrollbarX.set)
+
 #*******************************************
 #colores predeterminados para el area de texto
 areaTexto.tag_config("Tk_reservada", foreground="#F42424")#palabras reservadas
@@ -323,12 +340,7 @@ areaTexto.tag_config("Tk_digito", foreground="#20679D")#enteros y boolean
 areaTexto.tag_config("Tk_comentario", foreground="#BE1C82")#comentarios
 areaTexto.tag_config("Tk_operador", foreground="#F48024")#operadores
 areaTexto.tag_config("otro",foreground="#179D7F")#otros
-# posicion en la matriz y que se expanda en los cuatro puntos cardinales
-areaTexto.grid(row=0,column=1,sticky="ew")
 
-#config del funcion scrooll
-scrollbarX.config(command=areaTexto.xview)
-scrollbar.config(command=areaTexto.yview)
 
 
 # separador
