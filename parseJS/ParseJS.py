@@ -89,12 +89,17 @@ class parseJS:
         estadoDecimal = True
         estadoSimbolos = True
         estadoComentarioUnilinea = True
+        estadoComentarioMultilinea = True
+        estadoString = True
+        estadoChar = True
         #*************************************
         #ESCRITURA DEL ARCHIVO DOT
         archivoDot = open("ReporteGrafico\\grafo.dot","w")
         archivoDot.write("digraph automa {\n")
+        archivoDot.write("nodesep=0.6;\n")
         archivoDot.write("rankdir=LR;\n")
-        archivoDot.write("node [shape = circle];\n")
+        archivoDot.write("node [shape = circle, color=dodgerblue,style=filled,fontname =\"helvetica\"];\n")
+        archivoDot.write("edge[penwidth=2.5, color=\"#246167\"]\n")
         archivoDot.write("nodoRaiz[label=\"q0\"];\n")
         #*************************************
         # puntero indica que parte de la cadena vamos
@@ -374,6 +379,20 @@ class parseJS:
                 self.columna += 1
                 self.estado = 0
                 puntero -= 1
+                #******************************************
+                #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                if estadoComentarioMultilinea == True:
+                    #archivoDot.write("nodoSlash [shape=circle, label=\"q4\"];\n")
+                    archivoDot.write("nodoAsterisco [shape=circle, label=\"q6\"];\n")
+                    archivoDot.write("nodoAsterisco2 [shape=circle, label=\"q4\"];\n")
+                    archivoDot.write("nodoSlashFinal [shape=doublecircle, label=\"q5\"];\n")
+
+                    archivoDot.write("nodoSlash->nodoAsterisco [label=\" * \"];\n")
+                    archivoDot.write("nodoAsterisco->nodoAsterisco [label=\" T \"];\n")
+                    archivoDot.write("nodoAsterisco->nodoAsterisco2 [label=\" * \"];\n")
+                    archivoDot.write("nodoAsterisco2->nodoAsterisco [label=\" T \"];\n")
+                    archivoDot.write("nodoAsterisco2->nodoSlashFinal [label=\" \\ \"]; \n")
+                    estadoComentarioMultilinea = False  
 
 
 
@@ -420,6 +439,20 @@ class parseJS:
                 self.token = ""  
                 self.columna += 1
                 self.estado = 0
+                #******************************************
+                #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
+                if estadoString == True:
+                    #archivoDot.write("nodoSlash [shape=circle, label=\"q4\"];\n")
+                    archivoDot.write("nodoComilla1 [shape=circle, label=\" q9 \"];\n")
+                    archivoDot.write("nodoT [shape=circle, label=\" q4 \"];\n")
+                    archivoDot.write("nodoComilla2 [shape=doublecircle, label=\" q5 \"];\n")
+
+                    archivoDot.write("nodoRaiz->nodoComilla1 [label=\" \\\" \"];\n")
+                    archivoDot.write("nodoComilla1->nodoT [label=\" T \"];\n")
+                    archivoDot.write("nodoT->nodoT [label=\" T \"];\n")
+                    archivoDot.write("nodoT->nodoComilla2 [label=\" T \"];\n")
+                    archivoDot.write("nodoComilla1->nodoComilla2 [label=\" \\\" \"]; \n")
+                    estadoString = False  
 
 
 
@@ -502,9 +535,9 @@ class parseJS:
                     if estadoDecimal == True:
                         archivoDot.write("nodoPunto[shape=circle,label=\"q15\"];\n")
                         archivoDot.write("nodoDecimal[shape=doublecircle,label=\"q16\"];\n")
-                        archivoDot.write("nodoDigito->nodoPunto[label=\".\"]\n")
-                        archivoDot.write("nodoPunto->nodoDecimal[label=\"D\"]\n")
-                        archivoDot.write("nodoDecimal->nodoDecimal[label=\"D\"]\n")
+                        archivoDot.write("nodoDigito->nodoPunto[label=\".\"];\n")
+                        archivoDot.write("nodoPunto->nodoDecimal[label=\"D\"];\n")
+                        archivoDot.write("nodoDecimal->nodoDecimal[label=\"D\"];\n")
                         estadoDecimal = False
 
             

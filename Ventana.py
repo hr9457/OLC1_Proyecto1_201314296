@@ -96,7 +96,7 @@ def analizar():
         #ARCHIVO HTML
         elif tipoArchivo == "html":
             html = AnalizadorHTML(textoCargado,nombreArchivo)
-            html.automata()
+            listaErroresRecibidos = html.automata()
         #************************************
         #ARCHIVO RMT
         elif tipoArchivo == "rmt":

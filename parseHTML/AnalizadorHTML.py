@@ -46,10 +46,15 @@ class AnalizadorHTML:
     # movimiento del carrito en el texto
     def isMoveInsert(self,caracter):
         if (caracter == " "
-        or caracter == "\n"
         or caracter == "\t"
         or caracter == "\r"):
             return True
+
+        elif caracter == "\n":
+            self.fila += 1
+            self.columna = 0
+            return True
+
         else:
             return False
 
@@ -200,7 +205,7 @@ class AnalizadorHTML:
                             self.token = ""
                     else:
                         pass
-
+                        
                     self.estado = 2
 
 
@@ -227,6 +232,13 @@ class AnalizadorHTML:
                     self.estado = 3
 
 
+
+                #captura de errores dentro de las etiquetas
+                else:
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    print("ERROR LEXICO ETIQUETAS: "+self.txtEntrada[puntero])
+                    self.numeroError += 1
+                    self.columna += 1
 
 
 
@@ -296,6 +308,11 @@ class AnalizadorHTML:
             elif self.estado == 8:
                 # mientra sea diferente de < posible etiqueta
                 if self.txtEntrada[puntero] != chr(60):
+                    #si viene un salto de linea
+                    if self.txtEntrada[puntero] == "\n":
+                        self.fila += 1
+                        self.columna = 0
+                    #---------------------------    
                     self.token += self.txtEntrada[puntero]
                     self.estado = 8
 
@@ -362,23 +379,30 @@ class AnalizadorHTML:
 
 
                 # si viene una etiqueta de cierre >
-                elif self.token != "":
-                    #acepto la cadena
-                    if self.token.lower() in self.palabrasReservadas:
-                        self.addToken("Tk_reservada",self.token)
-                        print("PALABRA RESERVADA : "+self.token)
-                        self.token = ""                        
+                elif self.txtEntrada[puntero] == chr(62):
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token.lower() in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+
                     else:
-                        self.addToken("Tk_id",self.token)
-                        print("ID : "+self.token)
-                        self.token = ""
+                        pass
 
                     self.token += self.txtEntrada[puntero]
                     self.estado = 11
 
 
                 else:
-                    pass
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    print("ERROR LEXICO ETIQUETA CIERRE: "+self.txtEntrada[puntero])
+                    self.numeroError += 1
+                    self.columna += 1
 
 
 
@@ -391,10 +415,44 @@ class AnalizadorHTML:
                 print("SIGNO : "+self.token)
                 self.token = "" 
                 self.estado = 0
+                self.columna += 1
                 puntero -= 1 
+
+
+
+            elif self.estado == 12:
+                pass
+
+
+            elif self.estado == 13:
+                pass
+
+
+            elif self.estado == 14:
+                pass
+
+
+            elif self.estado == 15:
+                pass
+
+
+            elif self.estado == 16:
+                pass
+
+
+            elif self.estado == 17:
+                pass
+
+
+            elif self.estado == 18:
+                pass
+
 
 
 
             #movimiento del puntero
             puntero += 1
             # fin del ciclo while
+
+
+        return self.listaErrores
