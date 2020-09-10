@@ -129,6 +129,12 @@ class AnalizadorHTML:
                     self.estado = 9
 
 
+                # SI  VIENE UN SIGNO DE ADMIRACION ES UNA POSIBLE COMENTARIO
+                elif self.txtEntrada[puntero] == chr(33):
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 12
+
+
                 # en caso contrario no es una etiqueta
                 else:
                     self.token += self.txtEntrada[puntero]
@@ -419,33 +425,90 @@ class AnalizadorHTML:
                 puntero -= 1 
 
 
-
+            #--------------------------------------------------------------------
+            # comentario html <!-- comentario
             elif self.estado == 12:
-                pass
+                # si viene un guion en el comentario
+                if self.txtEntrada[puntero] == chr(45): # -
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 13
+
+                else:
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("ERROR LEXICO COMENTARIO: "+self.token)
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna += 1
+                    puntero -= 1
+                    self.estado = 0
+
 
 
             elif self.estado == 13:
-                pass
+                # si viene un guien en el comentario
+                if self.txtEntrada[puntero] == chr(45): # -
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 14
+
+                else:
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("ERROR LEXICO COMENTARIO: "+self.token)
+                    self.token = "" 
+                    self.numeroError += 1
+                    self.columna += 1
+                    puntero -= 1
+                    self.estado = 0
+
 
 
             elif self.estado == 14:
-                pass
+                # concateno todo hasta que venga un guion 
+                if self.txtEntrada[puntero] != chr(45): # -
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 14
+
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 15
+
 
 
             elif self.estado == 15:
-                pass
+                # si viene un guien en la cadena
+                if self.txtEntrada[puntero] == chr(45):
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 16
+
+                # si no viene otro guion en la cadena
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 14 # regreso al estado anterior tiene que cumplir el doble --
+            
 
 
             elif self.estado == 16:
-                pass
+                # si viene un > para cierre de comentario
+                if self.txtEntrada[puntero] == chr(62): # >
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 17
+
+                else:
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 14
 
 
+
+
+            #*********************************************************************
+            # aceptacion para el comentario en html
             elif self.estado == 17:
-                pass
-
-
-            elif self.estado == 18:
-                pass
+                #aceptamos 
+                self.addToken("Tk_comentario",self.token)
+                print("COMENTARIO : "+self.token)
+                self.token = "" 
+                self.estado = 0
+                self.columna += 1
+                puntero -= 1 
 
 
 
