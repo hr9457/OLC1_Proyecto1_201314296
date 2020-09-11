@@ -1,18 +1,2 @@
+/* PATHL -> c:\user\output\js*/
 /*PATHW -> c:\user\output\js*/
-    html,body{
-       margin:0;
-        padding:0
-    }
-    /*
-            Entrada archivo css
-    */
-    body{font: 76% ari*al,sans-serif; 
-        background-image: url("/home/documents/picture.png");
-        background: 0 0 0 0.2rem
-    }
-    p{ margin:0 10px 10px}
-    a{
-        display:block;
-        color: #981793; 
-        padding:10px;
-    }
