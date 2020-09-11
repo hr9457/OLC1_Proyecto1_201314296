@@ -365,6 +365,7 @@ class AnalizadorHTML:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 10
 
+                # que no venga un letra despues 
                 else:
                     pass
 
@@ -517,5 +518,5 @@ class AnalizadorHTML:
             puntero += 1
             # fin del ciclo while
 
-
+        # RETORNO UNA LISTA CON TODOS LOS ERRORES
         return self.listaErrores

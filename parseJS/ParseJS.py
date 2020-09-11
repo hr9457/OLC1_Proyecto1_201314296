@@ -552,43 +552,74 @@ class parseJS:
         comandoConversion = "dot.exe -Tpng ReporteGrafico\\grafo.dot -o  ReporteGrafico\\automataJS.png"
         subprocess.Popen(comandoConversion,shell=True)
         #*********************************************************
-        self.destino()
+        #print("linea 0: "+self.listaToken[0][1])
+        #print("linea 1: "+self.listaToken[2][1])
+        self.BusquedaRuta()
         # retorno de la lista con los error encontrados en el archivo
         return self.listaErrores
         
 
 
 
+#******************************************************************************************
+# escritura de la ruta destino
+    def destino(self,rutaWindwos):
+        #guardo la ruta 
+        self.rutaSalida = rutaWindwos
+        print("---------->"+self.rutaSalida)
+        separacionArchivo = self.rutaSalida.split("output")
+        print(""+separacionArchivo[1])
+        carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
+
+
+
+
+        #verificacion de la existencias de de las rutas
+        if os.path.isdir(carpetaDestino)==True:
+            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
+            #********************************************************
+            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+            for fila in range(len(self.listaToken)):
+                archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+            archivoSalidaJS.close()
+        else:
+            #metodo para la creacion de archivos
+            os.makedirs(carpetaDestino)#metodo que crea carpetas
+            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
+            #********************************************************
+            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+            for fila in range(len(self.listaToken)):
+                archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+            archivoSalidaJS.close()
+
+
     #----------------------------------------------------------------------------------------------
     #metodo para la creacion de la carpet destino para el archivo de JS
-    def destino(self):
+    # busqueda de la ruta en las primeras dos lineas
+    def BusquedaRuta(self):
+        # si no hay elemento en la lista para buscar la ruta
         if len(self.listaToken) == 0:
             print("---->No hay elementos en la lista")
+
+        # en caso contrario buscamos la ruta en las dos primeras lineas
         else:
-            #guardo la ruta 
-            self.rutaSalida = self.listaToken[0][1]
-            print("---------->"+self.rutaSalida)
-            separacionArchivo = self.rutaSalida.split("output")
-            print(""+separacionArchivo[1])
-            carpetaDestino = 'salidaArchivos\\'+separacionArchivo[1]
 
-            #verificacion de la existencias de de las rutas
-            if os.path.isdir(carpetaDestino)==True:
-                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
-                #********************************************************
-                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
-                for fila in range(len(self.listaToken)):
-                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+            #busqueda de la ruta en las dos primeras lienas
+            if self.listaToken[0][1].find("PATHW") > -1:
+                rutaWindows = self.listaToken[0][1]
+                self.destino(rutaWindows)
+                print("Ruta en la primera linea")
 
-                archivoSalidaJS.close()
+            elif self.listaToken[2][1].find("PATHW") > -1:
+                rutaWindows = self.listaToken[2][1]
+                self.destino(rutaWindows)
+                print("Ruta en la segunda linea")
+
             else:
-                #metodo para la creacion de archivos
-                os.makedirs(carpetaDestino)#metodo que crea carpetas
-                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
-                #********************************************************
-                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
-                for fila in range(len(self.listaToken)):
-                    archivoSalidaJS.write(""+self.listaToken[fila][1])
+                pass
 
-                archivoSalidaJS.close()
+
+
 
