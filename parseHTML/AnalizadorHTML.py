@@ -1,3 +1,7 @@
+import io
+import os
+import subprocess
+
 # anlizar para la parte del archivo en html
 class AnalizadorHTML:
     
@@ -92,9 +96,21 @@ class AnalizadorHTML:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 1
 
-
-                elif self.isMoveInsert(self.txtEntrada[puntero])==True:
+                # movientos en el cursos
+                elif (self.txtEntrada[puntero] == ' '):
                     pass
+
+                # tabulacion
+                elif (self.txtEntrada[puntero] == '\t'
+                or self.txtEntrada[puntero] == '\r'):
+                    pass
+
+                # salto de linea
+                elif self.txtEntrada[puntero] == '\n':
+                    self.addToken("carrito","\n")
+                    self.fila += 1
+                    self.columna = 0
+                    self.estado = 0
 
 
                 else:
@@ -518,5 +534,81 @@ class AnalizadorHTML:
             puntero += 1
             # fin del ciclo while
 
+
+
+
+        #para la escritura del archivo html
+        self.BusquedaRuta()
         # RETORNO UNA LISTA CON TODOS LOS ERRORES
         return self.listaErrores
+
+
+
+
+
+
+    #*********************************************************************************************
+
+    #escritura del archivo en limpio en la ruta entradas
+    def destino(self,rutaWindows):
+        #guardo la ruta 
+        self.rutaSalida = rutaWindows
+        print("---------->"+self.rutaSalida)
+        separacionArchivo = self.rutaSalida.split("output") #separo por la palabra output
+        print(""+separacionArchivo[1])
+
+        CarpetasdelArchivo = ""+separacionArchivo[1] # solo  seleciono las carpetas a crear
+
+        archivoSinCierre = CarpetasdelArchivo.split("-") # quito el cierre del comentario
+        print(""+archivoSinCierre[0])
+
+        carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0]
+
+        #verificacion de la existencias de de las rutas
+        if os.path.isdir(carpetaDestino)==True:
+            archivoSalidaJS = open(""+carpetaDestino+self.nombreArchivo+".html","w")
+            #********************************************************
+            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+            for fila in range(len(self.listaToken)):
+                archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+            archivoSalidaJS.close()
+
+        else:
+            #metodo para la creacion de archivos
+            os.makedirs(carpetaDestino)#metodo que crea carpetas
+            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
+            #********************************************************
+            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+            for fila in range(len(self.listaToken)):
+                archivoSalidaJS.write(""+self.listaToken[fila][1])
+
+            archivoSalidaJS.close()
+
+
+
+    #----------------------------------------------------------------------------------------------
+    #metodo para la creacion de la carpet destino para el archivo de JS
+    def BusquedaRuta(self):
+        # si el archivo no contiene nada analizado
+        if len(self.listaToken) == 0:
+            print("---->No hay elementos en la lista")
+
+        # busqued de la ruta en las dos priemras lineas
+        else:
+
+            #busqueda de la ruta en las dos primeras lineas
+            if self.listaToken[0][1].find("PATHW") > -1:
+                rutaWindows = self.listaToken[0][1]
+                self.destino(rutaWindows)
+                print("Ruta en la primera linea")
+
+            # busqueda de la ruta en la segundo linea
+            elif self.listaToken[2][1].find("PATHW") > -1:
+                rutaWindows = self.listaToken[2][1]
+                self.destino(rutaWindows)
+                print("Ruta en la segunda linea")
+
+            # por si no viene la ruta en el archivo
+            else:
+                pass

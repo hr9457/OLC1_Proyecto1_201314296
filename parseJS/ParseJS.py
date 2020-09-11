@@ -576,7 +576,7 @@ class parseJS:
 
         #verificacion de la existencias de de las rutas
         if os.path.isdir(carpetaDestino)==True:
-            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".js","w")
+            archivoSalidaJS = open(""+carpetaDestino+self.nombreArchivo+".js","w")
             #********************************************************
             #ESCIRTURA PARA EL ARCHIVO DE SALIDA
             for fila in range(len(self.listaToken)):

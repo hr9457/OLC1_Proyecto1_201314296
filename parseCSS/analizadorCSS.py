@@ -30,15 +30,15 @@ class analizadorcss:
         else:
             return False
 
-     # verificion si es un numero
+    # verificion si es un numero
     def isNumber(self,caracter):
         if (caracter >= chr(48) and caracter <= chr(57)):
             return True
         else:
             return False
 
-     # verificacion si un es un simbolo permitido por el lenguaje CSS
-     # 12 simbolos identificados
+    # verificacion si un es un simbolo permitido por el lenguaje CSS
+    # 12 simbolos identificados
     def isSymbol(self,caracter):
         if(caracter == chr(37) # %
         or caracter == chr(40) # (
@@ -488,7 +488,7 @@ class analizadorcss:
         else:
             #metodo para la creacion de archivos
             os.makedirs(carpetaDestino)#metodo que crea carpetas
-            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".css","w")
+            archivoSalidaJS = open(""+carpetaDestino+self.nombreArchivo+".css","w")
             #********************************************************
             #ESCIRTURA PARA EL ARCHIVO DE SALIDA
             for fila in range(len(self.listaToken)):
@@ -519,7 +519,4 @@ class analizadorcss:
 
             else:
                 pass
-
-            
-            
 
