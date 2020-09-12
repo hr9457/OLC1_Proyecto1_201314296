@@ -6,6 +6,7 @@ class analizadoSintactico:
         self.token = listaToken[0][0]
         self.posicion = 0
         self.listaErrores = []
+        self.contador = 1
 
 
 
@@ -14,17 +15,20 @@ class analizadoSintactico:
     def match(self,preanalisis):
         if preanalisis != self.token:
             print("se esperaba: "+preanalisis)
+            self.contador -= 1
 
         if self.posicion < len(self.listaToken)-1:
             self.posicion += 1
             print("*****"+self.token+"*****")
             self.token = self.listaToken[self.posicion][0]
+            self.contador += 1 # aumento en uno las operaciones verificadas
             
 
 
     #arranque
     def arranque(self):
         self.operando1()
+        return self.contador #retorno cuantas operaciones se verificaron en el sintactico
 
     #producciones
     # A -> BA'

@@ -1,15 +1,34 @@
 digraph automa {
 nodesep=0.6;
 rankdir=LR;
+bgcolor = "#DFDFE1";
 node [shape = circle, color=dodgerblue,style=filled,fontname ="helvetica"];
 edge[penwidth=2.5, color="#246167"]
 nodoRaiz[label="q0"];
+nodoSlash [shape=circle, label="q4"];
+nodoTodillo [shape=doublecircle, label="q5"];
+nodoRaiz->nodoSlash [label=" Slash\ "];
+nodoSlash->nodoTodillo [label=" Slash\ "];
+nodoTodillo->nodoTodillo [label=" T "];
+nodoAsterisco [shape=circle, label="q6"];
+nodoAsterisco2 [shape=circle, label="q4"];
+nodoSlashFinal [shape=doublecircle, label="q5"];
+nodoSlash->nodoAsterisco [label=" * "];
+nodoAsterisco->nodoAsterisco [label=" T "];
+nodoAsterisco->nodoAsterisco2 [label=" * "];
+nodoAsterisco2->nodoAsterisco [label=" T "];
+nodoAsterisco2->nodoSlashFinal [label=" \ "]; 
 nodoLetra[shape=doublecircle,label="q1"];
 nodoRaiz->nodoLetra[label="L|_"];
 nodoLetra->nodoLetra[label="L|D|_"];
 nodoSimbolo [shape=doublecircle, label="q3"];
 nodoRaiz->nodoSimbolo[label="S"];
-nodoDigito[shape=doublecircle,label="q2"];
-nodoRaiz->nodoDigito[label="D"];
-nodoDigito->nodoDigito[label="D"];
+nodoComilla1 [shape=circle, label=" q9 "];
+nodoT [shape=circle, label=" q4 "];
+nodoComilla2 [shape=doublecircle, label=" q5 "];
+nodoRaiz->nodoComilla1 [label=" \" "];
+nodoComilla1->nodoT [label=" T "];
+nodoT->nodoT [label=" T "];
+nodoT->nodoComilla2 [label=" T "];
+nodoComilla1->nodoComilla2 [label=" \" "]; 
 }

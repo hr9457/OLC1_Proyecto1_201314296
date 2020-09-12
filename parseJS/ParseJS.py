@@ -98,8 +98,9 @@ class parseJS:
         archivoDot.write("digraph automa {\n")
         archivoDot.write("nodesep=0.6;\n")
         archivoDot.write("rankdir=LR;\n")
-        archivoDot.write("node [shape = circle, color=dodgerblue,style=filled,fontname =\"helvetica\"];\n")
-        archivoDot.write("edge[penwidth=2.5, color=\"#246167\"]\n")
+        archivoDot.write("bgcolor = \"#DFDFE1\";\n")
+        archivoDot.write("node [shape = circle, color=dodgerblue,style=filled,fontname =\"helvetica\" ,fontcolor=white];\n")
+        archivoDot.write("edge[penwidth=2.5, color=\"#246167\" ,fontname =\"Comic Sans MS\",fontcolor=Black ]\n")
         archivoDot.write("nodoRaiz[label=\"q0\"];\n")
         #*************************************
         # puntero indica que parte de la cadena vamos

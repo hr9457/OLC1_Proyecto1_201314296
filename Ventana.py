@@ -102,10 +102,10 @@ def analizar():
         elif tipoArchivo == "rmt":
             operacones = analizadorOperaciones(textoCargado)            
             # multiple return = erroes lexicos y los token aceptados
-            listaErroresRecibidos,listaTokenRecibidos = operacones.automata()
+            listaErroresRecibidos = operacones.automata()
             #envio y analisis sintactico
-            operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
-            operacionesSintactico.arranque()
+            #operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
+            #operacionesSintactico.arranque()
         
 
 
