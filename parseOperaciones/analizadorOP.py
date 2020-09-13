@@ -1,4 +1,6 @@
 from parseOperaciones.analizadorSintactico import analizadoSintactico # analizador sintatico op
+import io
+import os
 
 class analizadorOperaciones:
     #metodo constructor
@@ -15,7 +17,8 @@ class analizadorOperaciones:
         self.operacion = ""
         self.inicioOperacion = 0
         self.listaErrorOperaciones = []
-        self.contador = 0
+        self.contador = 0 
+        self.reporteOperaciones = []       
 
 
     # metodo para saber si es una letra
@@ -137,8 +140,10 @@ class analizadorOperaciones:
                     #verifico si se analizo toda la cadena
                     if self.contador == tamanioOperacion:
                         print("OPERACION: "+self.operacion+"  CORRECTA")
+                        self.reporteOperaciones.append([self.operacion,"CORRECTA"])
                     else:
                         print("OPERACION: "+self.operacion+"  INCORRECTA")
+                        self.reporteOperaciones.append([self.operacion,"INCORRECTA"])
 
                     #cambio el inicio desde donde empiez la operacion
                     self.inicioOperacion = len(self.listaToken)
@@ -287,7 +292,7 @@ class analizadorOperaciones:
             #dentro del texto
             puntero += 1
 
-
+        self.reporteHTML()
         #retorno la lista de erroes si existieran
         return self.listaErrores
 
@@ -297,3 +302,57 @@ class analizadorOperaciones:
 
 #*******************************************************************************
 #   ESCRITURA DEL REPORTE DE ERRORES
+    def reporteHTML(self):
+        if len(self.reporteOperaciones) != 0:
+            archivo = open("ReporteHTML\\Operaciones.html","w")
+            archivo.write("<html>\n")
+            archivo.write("<head>\n")
+            archivo.write("<meta charset=\"UTF-8\" >\n")
+            archivo.write("<title>  !Reporte de Operaciones!  </title>\n")
+            archivo.write("<link rel=\"stylesheet\" href=\"style.css\" >\n")
+            archivo.write("</head>")
+            archivo.write("<body>\n")
+            #*********TITULO***************
+            archivo.write("<h1> REPORTE DE OPERACIONES </h1>\n")
+            #creacion del la tabla con los errores
+            archivo.write("<table border=\"1\">\n")
+            archivo.write("<thead>")
+            archivo.write("<td>")
+            archivo.write("Operacion")
+            archivo.write("</td>")
+            archivo.write("<td>")
+            archivo.write("Analisis")
+            archivo.write("</td>")
+            archivo.write("</thead>\n")
+            #ELEMENTOS DE LA TABLA
+            for fila in range(len(self.reporteOperaciones)):
+                archivo.write("<tr>\n")   
+                for columna in range(len(self.reporteOperaciones[fila])):
+                    archivo.write("<td>")
+                    archivo.write(""+self.reporteOperaciones[fila][columna])
+                    archivo.write("</td>\n")
+
+                archivo.write("</tr>\n")
+            #*****************************
+            archivo.write("</table>\n")
+            #--------------------------------------
+            archivo.write("</body>\n")
+            archivo.write("</head>\n")
+            archivo.write("</html>\n")
+            archivo.close()
+        else:
+            archivo = open("ReporteHTML\\Operaciones.html","w")
+            archivo.write("<html>\n")
+            archivo.write("<head>\n")
+            archivo.write("<meta charset=\"UTF-8\" >\n")
+            archivo.write("<title>  !Reporte de Operaciones!  </title>\n")
+            archivo.write("<link rel=\"stylesheet\" href=\"style.css\" >\n")
+            archivo.write("</head>")
+            archivo.write("<body>\n")
+            #*********TITULO***************
+            archivo.write("<h1> NO HUBO REPORTE DE OPEREACIONES </h1>\n")
+            #--------------------------------------
+            archivo.write("</body>\n")
+            archivo.write("</head>\n")
+            archivo.write("</html>\n")
+            archivo.close()

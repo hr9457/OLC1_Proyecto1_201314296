@@ -131,6 +131,7 @@ def analizar():
             archivo.write("<html>\n")
             archivo.write("<head>\n")
             archivo.write("<title>  !Reporte de Errores Lexicos!  </title>\n")
+            archivo.write("<link rel=\"stylesheet\" href=\"style.css\" >\n")
             archivo.write("</head>")
             #*********TITULO***************
             archivo.write("<h1> NO SE ECONTRARON ERROES LEXICOS </h1>\n")
@@ -243,6 +244,13 @@ def reporteAutomata():
 #--------------------------------------------------------------------------
 
 
+#---------------------------------------------------------------------------
+def reporteOperacion():
+    comandoApertura ='ReporteHTML\\Operaciones.html'
+    subprocess.Popen(comandoApertura,shell=True)
+#---------------------------------------------------------------------------
+
+
 # creacion de la raiz
 raiz=Tk()
 raiz.config(background="#282a36") 
@@ -284,6 +292,7 @@ menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Reportes",menu=fileReporte)
 fileReporte.add_cascade(label="Reporte HTML", command=reporteHtml)
 fileReporte.add_cascade(label="Reporte Graphviz",command=reporteAutomata)
+fileReporte.add_cascade(label="Reporte Operaciones",command=reporteOperacion)
 menubar.add_cascade(label="Salir", command=raiz.quit)
 
 

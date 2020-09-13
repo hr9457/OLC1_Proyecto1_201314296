@@ -473,7 +473,7 @@ class analizadorcss:
         CarpetasdelArchivo = ""+separacionArchivo[1]
         archivoSinCierre = CarpetasdelArchivo.split("*")
         print(""+archivoSinCierre[0])
-        carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0]
+        carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0].rstrip()
 
         #verificacion de la existencias de de las rutas
         if os.path.isdir(carpetaDestino)==True:
@@ -488,7 +488,7 @@ class analizadorcss:
         else:
             #metodo para la creacion de archivos
             os.makedirs(carpetaDestino)#metodo que crea carpetas
-            archivoSalidaJS = open(""+carpetaDestino+self.nombreArchivo+".css","w")
+            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".css","w")
             #********************************************************
             #ESCIRTURA PARA EL ARCHIVO DE SALIDA
             for fila in range(len(self.listaToken)):

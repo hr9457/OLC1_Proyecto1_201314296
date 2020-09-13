@@ -7,8 +7,18 @@ class analizadoSintactico:
         self.posicion = 0
         self.listaErrores = []
         self.contador = 1
+        self.tokenAnterior = ""
 
 
+    #-------------------------------------------------------------------------------
+    def estadoError(self,tokenActual):
+        if (tokenActual == "Tk_multiplicacion"# *
+        or tokenActual == "Tk_suma"# +
+        or tokenActual == "Tk_resta"# - 
+        or tokenActual == "Tk_division"
+        or tokenActual == "Tk_apertura"):# /
+            print("se esperaba un DIGITO")
+            self.contador -= 1
 
     #--------------------------------------------------------------------------------
     #metodo de parea
@@ -17,12 +27,15 @@ class analizadoSintactico:
             print("se esperaba: "+preanalisis)
             self.contador -= 1
 
+        elif preanalisis == self.token:            
+            print("*****"+self.token+"*****")
+
         if self.posicion < len(self.listaToken)-1:
             self.posicion += 1
-            print("*****"+self.token+"*****")
+            self.tokenAnterior = self.token
             self.token = self.listaToken[self.posicion][0]
             self.contador += 1 # aumento en uno las operaciones verificadas
-            
+
 
 
     #arranque
@@ -100,7 +113,7 @@ class analizadoSintactico:
         else:
             self.operando10()#G
 
-    #G -> (A) | numero | variable | nada
+    #G -> (A) | numero | variable 
     def operando10(self):
         if self.token == "Tk_apertura":
             self.match("Tk_apertura")
@@ -117,7 +130,7 @@ class analizadoSintactico:
             self.match("Tk_id")
             #print(" ID ")
 
-        
         else:
-            pass
-
+            #self.match("ERROR")
+            #self.posicion += 1
+            self.estadoError(self.tokenAnterior)

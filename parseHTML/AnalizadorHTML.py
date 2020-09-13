@@ -383,7 +383,10 @@ class AnalizadorHTML:
 
                 # que no venga un letra despues 
                 else:
-                    pass
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    print("ERROR LEXICO ETIQUETA CIERRE: "+self.txtEntrada[puntero])
+                    self.numeroError += 1
+                    self.columna += 1
 
 
 
@@ -562,11 +565,14 @@ class AnalizadorHTML:
         archivoSinCierre = CarpetasdelArchivo.split("-") # quito el cierre del comentario
         print(""+archivoSinCierre[0])
 
-        carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0]
+        carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0].rstrip()
+        print("------>"+carpetaDestino)
 
         #verificacion de la existencias de de las rutas
         if os.path.isdir(carpetaDestino)==True:
-            archivoSalidaJS = open(""+carpetaDestino+self.nombreArchivo+".html","w")
+            archivo = carpetaDestino + "\\"+self.nombreArchivo
+            print("---->"+archivo)
+            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
             #********************************************************
             #ESCIRTURA PARA EL ARCHIVO DE SALIDA
             for fila in range(len(self.listaToken)):
