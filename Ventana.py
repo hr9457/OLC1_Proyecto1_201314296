@@ -18,7 +18,7 @@ from parseHTML.AnalizadorHTML import AnalizadorHTML # analizador lexico del html
 tipoArchivo = ""
 nombreArchivo = "" 
 
-
+# METODO PARA BORRAR LO DEL TEXT AREA
 #--------------------------------------------------------------------
 def new():
     global areaTexto
@@ -26,6 +26,7 @@ def new():
     areaTexto.delete("1.0",END+"-1c")
     areaTextoErrore.delete("1.0",END+"-1c")
 
+# METODO PARA APERTURA DE UN TEXTO PARA ANALIZAR
 #----------------------------------------------------------------------
 def openFile():    
     global areaTexto # are de texto principal
@@ -47,6 +48,9 @@ def openFile():
     tipoArchivo = archivoSeperado[1]
     areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo+"\n")
     #areaTextoErrore.insert(INSERT,"Nombre del archivo-> "+nombreArchivo)
+
+    # PRUEBA DE CONTEO DE LINEA
+    contadorLineas()
 
 #pruebapara colo de texto para el pintado de las letras
 #------------------------------------------------------------------------
@@ -223,9 +227,13 @@ def analizar():
 def contadorLineas():
     global LineasTexto
     global areaTexto
-    texto = areaTexto.get("0.0",END+"-1c")
-    lineasTxt = len(texto.read())
-    print(lineasTxt)
+    total = int(areaTexto.index(END).split('.')[0])
+    print(total)
+    i = 0
+    while i < total:
+        #print(i)
+        LineasTexto.insert(INSERT,str(i)+"\n")
+        i += 1
 #------------------------------------------------------------------------
 
 # APERTURA DE REPORTE HMTL
@@ -249,7 +257,11 @@ def reporteOperacion():
     comandoApertura ='ReporteHTML\\Operaciones.html'
     subprocess.Popen(comandoApertura,shell=True)
 #---------------------------------------------------------------------------
+def scroll(x, y):
+    areaTexto.yview(x,y)
+    LineasTexto.yview(x,y)
 
+#---------------------------------------------------------------------------
 
 # creacion de la raiz
 raiz=Tk()
@@ -297,10 +309,19 @@ menubar.add_cascade(label="Salir", command=raiz.quit)
 
 
 
+#--------------------------------------------------
+# segundo scrollbar para texto 
+#scrooll bar
+scrollbarY = Scrollbar(raiz, orient=VERTICAL)
+scrollbarY.grid(row=0,column=2,sticky="ns")
+
 #-------------------------------------------------
 LineasTexto = Text(raiz)  
-LineasTexto.config(width=3,height=20,font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
+LineasTexto.config(width=3,height=20,font=("Consolas",14),borderwidth=1,background="#282a36",fg='White')
 LineasTexto.grid(row=0,column=0,sticky="ns")
+#listaNumeros =Listbox(raiz)
+#listaNumeros.config(width=3,height=20,font=("Consolas",11),borderwidth=1,background="#282a36",fg='White')
+#listaNumeros.grid(row=0,column=0,sticky="ns")
 # list box para mostrar las filas
 #listaBox = Listbox(raiz)
 #listaBox.pack()
@@ -308,14 +329,6 @@ LineasTexto.grid(row=0,column=0,sticky="ns")
 # posicion y que se expanda de alto
 #listaBox.grid(row=0,column=0,sticky="ns")
 
-
-
-
-#--------------------------------------------------
-# segundo scrollbar para texto 
-#scrooll bar
-scrollbarY = Scrollbar(raiz, orient=VERTICAL)
-scrollbarY.grid(row=0,column=2,sticky="ns")
 
 
 #scrollbarX = Scrollbar(raiz, orient=HORIZONTAL)
@@ -332,8 +345,10 @@ font=("Consolas",14),borderwidth=0,background="#282a36",fg='White',selectbackgro
 areaTexto.grid(row=0,column=1,sticky="ew")
 
 #config del funcion scrooll
-scrollbarY.config(command=areaTexto.yview)
+LineasTexto.config(yscrollcommand=scrollbarY.set)
 areaTexto.config(yscrollcommand=scrollbarY.set)
+scrollbarY.config(command=scroll)
+
 
 scrollbarX = Scrollbar(raiz,orient=HORIZONTAL)
 scrollbarX.grid(row=1,column=1,sticky="ew")

@@ -408,6 +408,17 @@ class parseJS:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 11
 
+                # si viene salto de linea despues de comillas
+                elif self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+
                 # ACEPTO
                 else:
                     self.token += self.txtEntrada[puntero]
@@ -415,8 +426,19 @@ class parseJS:
                     
             
             elif self.estado == 10:
+                # si vien un salto de linea
+                if self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+
                 # concateno todo hasta encontrar "
-                if self.txtEntrada[puntero] != chr(34): # "
+                elif self.txtEntrada[puntero] != chr(34): # "
                     self.token += self.txtEntrada[puntero]
                     self.estado = 10
 
@@ -470,6 +492,17 @@ class parseJS:
                     self.estado = 14
                     puntero -= 1
 
+                # si viene salto de linea despues de comillas
+                elif self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+
                 else:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 13
@@ -477,9 +510,21 @@ class parseJS:
 
             # contenido de todas las comillas en el contenido
             elif self.estado == 13:
-                if self.txtEntrada[puntero] != chr(39): # '
+                # si vien un salto de linea
+                if self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+
+                elif self.txtEntrada[puntero] != chr(39): # '
                     self.token += self.txtEntrada[puntero]
                     self.estado = 13
+
                 else:
                     #impresion del token
                     #self.addToken(self.token)

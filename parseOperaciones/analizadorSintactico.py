@@ -12,7 +12,7 @@ class analizadoSintactico:
 
     #-------------------------------------------------------------------------------
     def estadoError(self,tokenActual):
-        if (tokenActual == "Tk_multiplicacion"# *
+        if (tokenActual == "Tk_multipliacion"# *
         or tokenActual == "Tk_suma"# +
         or tokenActual == "Tk_resta"# - 
         or tokenActual == "Tk_division"
@@ -40,6 +40,7 @@ class analizadoSintactico:
 
     #arranque
     def arranque(self):
+        #print(self.listaToken)
         self.operando1()
         return self.contador #retorno cuantas operaciones se verificaron en el sintactico
 

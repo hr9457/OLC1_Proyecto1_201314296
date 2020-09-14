@@ -140,10 +140,10 @@ class analizadorOperaciones:
                     #verifico si se analizo toda la cadena
                     if self.contador == tamanioOperacion:
                         print("OPERACION: "+self.operacion+"  CORRECTA")
-                        self.reporteOperaciones.append([self.operacion,"CORRECTA"])
+                        self.reporteOperaciones.append([self.operacion,"CORRECTO"])
                     else:
                         print("OPERACION: "+self.operacion+"  INCORRECTA")
-                        self.reporteOperaciones.append([self.operacion,"INCORRECTA"])
+                        self.reporteOperaciones.append([self.operacion,"INCORRECTO"])
 
                     #cambio el inicio desde donde empiez la operacion
                     self.inicioOperacion = len(self.listaToken)

@@ -303,14 +303,36 @@ class analizadorcss:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 8
 
+                # si viene salto de linea despues de comillas
+                elif self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+
                 else:
                     self.token += self.txtEntrada[puntero]
                     self.estado = 7
 
 
             elif self.estado == 7:
+                # si vien un salto de linea
+                if self.txtEntrada[puntero] == "\n":
+                    self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    print("Error lexico: "+self.token)                    
+                    self.token = ""
+                    self.numeroError += 1
+                    self.columna = 0
+                    self.fila += 1
+                    self.estado = 0
+                    puntero -= 1
+                    
                 #acepto todo lo que viene
-                if self.txtEntrada[puntero] != chr(34): # ""
+                elif self.txtEntrada[puntero] != chr(34): # ""
                     self.token += self.txtEntrada[puntero]
                     self.estado = 7
 
