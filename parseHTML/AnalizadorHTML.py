@@ -21,6 +21,7 @@ class AnalizadorHTML:
         self.palabrasReservadas = ["html","head","title","body","h1","h2","h3","h4","h5","h6",
         "p","br","img","src","a","href","ul","li","p","style","table","border","caption","tr",
         "td","table","colgroup","col","thed","tbody","tfoot"]
+        self.textoSalida = []
 
 
     # metodo para saber si es una letra
@@ -71,6 +72,10 @@ class AnalizadorHTML:
         self.listaErrores.append([""+str(numero),""+str(fila),
         ""+str(columna),token])
 
+    # agregar texto y devolver
+    def addTexto(self,lexema,token):
+        self.textoSalida.append([lexema,token])
+
 
 
 
@@ -103,11 +108,13 @@ class AnalizadorHTML:
                 # tabulacion
                 elif (self.txtEntrada[puntero] == '\t'
                 or self.txtEntrada[puntero] == '\r'):
-                    pass
+                    self.addToken("carrito","\t")
+                    self.addTexto("carrito","\t")
 
                 # salto de linea
                 elif self.txtEntrada[puntero] == '\n':
                     self.addToken("carrito","\n")
+                    self.addTexto("carrito","\n")
                     self.fila += 1
                     self.columna = 0
                     self.estado = 0
@@ -128,6 +135,7 @@ class AnalizadorHTML:
                 if self.isLetter(self.txtEntrada[puntero])==True:
                     #acepto el token de <
                     self.addToken("Tk_operador",self.token)
+                    self.addTexto("Tk_operador",self.token)
                     print("SIGNO: "+self.token)
                     self.token = ""                    
                     #paso al analizador interno de etiquetas
@@ -139,6 +147,7 @@ class AnalizadorHTML:
                 elif self.txtEntrada[puntero] == chr(47): # /
                     # aceptamos el token <
                     self.addToken("Tk_operador",self.token)
+                    self.addTexto("Tk_operador",self.token)
                     print("SIGNO: "+self.token)
                     self.token = "" 
                     self.token += self.txtEntrada[puntero]
@@ -179,10 +188,12 @@ class AnalizadorHTML:
                         #acepto la cadena
                         if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
                         else:
                             self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
                             print("ID : "+self.token)
                             self.token = ""
                         
@@ -199,10 +210,12 @@ class AnalizadorHTML:
                         #acepto la cadena
                         if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
                         else:
                             self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
                             print("ID : "+self.token)
                             self.token = ""
                         
@@ -219,10 +232,12 @@ class AnalizadorHTML:
                         #acepto la cadena
                         if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
                         else:
                             self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
                             print("ID : "+self.token)
                             self.token = ""
                     else:
@@ -238,10 +253,12 @@ class AnalizadorHTML:
                         #acepto la cadena
                         if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
                         else:
                             self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
                             print("ID : "+self.token)
                             self.token = ""
 
@@ -258,6 +275,7 @@ class AnalizadorHTML:
                 #captura de errores dentro de las etiquetas
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    self.addTexto("error",self.txtEntrada[puntero])
                     print("ERROR LEXICO ETIQUETAS: "+self.txtEntrada[puntero])
                     self.numeroError += 1
                     self.columna += 1
@@ -269,6 +287,7 @@ class AnalizadorHTML:
             # CIERRE DE ETIQUETA
             elif self.estado == 3:
                 self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("SIGNO : "+self.token)
                 self.token = ""                    
                 self.columna += 1
@@ -279,6 +298,7 @@ class AnalizadorHTML:
 
             elif self.estado == 4:
                 self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("SIGNO : "+self.token)
                 self.token = ""                    
                 self.columna += 1
@@ -317,6 +337,7 @@ class AnalizadorHTML:
             # aceptacion del string
             elif self.estado == 7:
                 self.addToken("Tk_string",self.token)
+                self.addTexto("Tk_string",self.token)
                 print("CADENA : "+self.token)
                 self.token = "" 
                 self.estado = 2
@@ -342,6 +363,7 @@ class AnalizadorHTML:
                 elif (self.txtEntrada[puntero] == chr(60)
                 and self.isLetter(self.txtEntrada[puntero+1])):
                     self.addToken("otro",self.token)
+                    self.addTexto("otro",self.token)
                     print("TEXTO: "+self.token)
                     self.token = ""
                     self.estado = 1
@@ -353,6 +375,7 @@ class AnalizadorHTML:
                 elif (self.txtEntrada[puntero] == chr(60)
                 and self.txtEntrada[puntero+1] == chr(47)):
                     self.addToken("otro",self.token)
+                    self.addTexto("otro",self.token)
                     print("TEXTO: "+self.token)
                     self.token = ""
                     self.estado = 1
@@ -376,6 +399,7 @@ class AnalizadorHTML:
                 if self.isLetter(self.txtEntrada[puntero])==True:
                     # aceptamos el token /
                     self.addToken("Tk_operador",self.token)
+                    self.addTexto("Tk_operador",self.token)
                     print("SIGNO: "+self.token)
                     self.token = "" 
                     self.token += self.txtEntrada[puntero]
@@ -384,6 +408,7 @@ class AnalizadorHTML:
                 # que no venga un letra despues 
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    self.addTexto("error",self.txtEntrada[puntero])
                     print("ERROR LEXICO ETIQUETA CIERRE: "+self.txtEntrada[puntero])
                     self.numeroError += 1
                     self.columna += 1
@@ -410,10 +435,12 @@ class AnalizadorHTML:
                         #acepto la cadena
                         if self.token.lower() in self.palabrasReservadas:
                             self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
                             print("PALABRA RESERVADA : "+self.token)
                             self.token = ""                        
                         else:
                             self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
                             print("ID : "+self.token)
                             self.token = ""
 
@@ -426,6 +453,7 @@ class AnalizadorHTML:
 
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
+                    self.addTexto("error",self.txtEntrada[puntero])
                     print("ERROR LEXICO ETIQUETA CIERRE: "+self.txtEntrada[puntero])
                     self.numeroError += 1
                     self.columna += 1
@@ -438,6 +466,7 @@ class AnalizadorHTML:
             elif self.estado == 11:
                 #aceptamos 
                 self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("SIGNO : "+self.token)
                 self.token = "" 
                 self.estado = 0
@@ -455,6 +484,7 @@ class AnalizadorHTML:
 
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("ERROR LEXICO COMENTARIO: "+self.token)
                     self.token = ""
                     self.numeroError += 1
@@ -472,6 +502,7 @@ class AnalizadorHTML:
 
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("ERROR LEXICO COMENTARIO: "+self.token)
                     self.token = "" 
                     self.numeroError += 1
@@ -524,6 +555,7 @@ class AnalizadorHTML:
             elif self.estado == 17:
                 #aceptamos 
                 self.addToken("Tk_comentario",self.token)
+                self.addTexto("Tk_comentario",self.token)
                 print("COMENTARIO : "+self.token)
                 self.token = "" 
                 self.estado = 0
@@ -543,7 +575,7 @@ class AnalizadorHTML:
         #para la escritura del archivo html
         self.BusquedaRuta()
         # RETORNO UNA LISTA CON TODOS LOS ERRORES
-        return self.listaErrores
+        return self.listaErrores,self.textoSalida
 
 
 

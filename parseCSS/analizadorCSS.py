@@ -21,6 +21,7 @@ class analizadorcss:
         "background","font-style","font","padding-botton","display","height","margin-bottom","border-style",
         "bottom","left","max-width","min-height","absolute","center","after","before","hover","url","content","rgba"]
         self.listadoBitacora = []
+        self.textoSalida = []
 
     # metodo para saber si es una letra
     def isLetter(self,caracter):
@@ -64,6 +65,9 @@ class analizadorcss:
         self.listaErrores.append([""+str(numero),""+str(fila),
         ""+str(columna),token])
 
+    # agregar texto y devolver
+    def addTexto(self,lexema,token):
+        self.textoSalida.append([lexema,token])
 
     #automata
     def automata(self):
@@ -128,6 +132,7 @@ class analizadorcss:
                 # si viene un espacio en blanco
                 elif self.txtEntrada[puntero] == " ":
                     self.addToken("carrito"," ")
+                    self.addTexto("carrito"," ")
                     self.columna += 1  
 
 
@@ -135,11 +140,12 @@ class analizadorcss:
                 elif (self.txtEntrada[puntero] == "\t"
                 or self.txtEntrada[puntero] == "\r"):
                     self.addToken("carrito","\t")
-
+                    self.addTexto("carrito","\t")
                     
                 # si vien un salto de linea
                 elif self.txtEntrada[puntero] == "\n":
                     self.addToken("carrito","\n")
+                    self.addTexto("carrito","\n")
                     self.columna = 0
                     self.fila += 1
 
@@ -148,6 +154,7 @@ class analizadorcss:
                     #numero fila columna token
                     self.token += self.txtEntrada[puntero]
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)  
                     self.numeroError += 1
                     self.columna += 1
@@ -160,6 +167,7 @@ class analizadorcss:
             #ESTADOS DE SIMBOLO ACEPTACION
             elif self.estado == 1:
                 self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("Token: "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -195,6 +203,7 @@ class analizadorcss:
                     #busqueda en la palabras reservadas
                     if self.token in self.palabrasReservadas:
                         self.addToken("Tk_reservada",self.token)
+                        self.addTexto("Tk_reservada",self.token)
                         print("RESERVADA :"+self.token)
                         self.token = ""
                         self.columna += 1
@@ -203,6 +212,7 @@ class analizadorcss:
 
                     else:    
                         self.addToken("Tk_id",self.token)
+                        self.addTexto("Tk_id",self.token)
                         print("ID : "+self.token)
                         self.token = ""
                         self.columna += 1
@@ -234,6 +244,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("Numero: "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -258,6 +269,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error Lexico : "+self.token)
                     self.token = ""
                     self.numeroError += 1
@@ -277,6 +289,7 @@ class analizadorcss:
                 #ACEPTACION
                 else:
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("NUMERO DECIMAL : "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -306,6 +319,7 @@ class analizadorcss:
                 # si viene salto de linea despues de comillas
                 elif self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -323,6 +337,7 @@ class analizadorcss:
                 # si vien un salto de linea
                 if self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -348,6 +363,7 @@ class analizadorcss:
             elif self.estado == 8:
                 # si viene comillas simples
                 self.addToken("Tk_string",self.token)
+                self.addTexto("Tk_string",self.token)
                 print("CADENA : "+self.token)
                 self.token = ""  
                 self.columna += 1
@@ -373,6 +389,7 @@ class analizadorcss:
                 #aceptacion
                 else:
                     self.addToken("Tk_operador",self.token)
+                    self.addTexto("Tk_operador",self.token)
                     print("OPERADOR : "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -391,6 +408,7 @@ class analizadorcss:
                 #aceptacion
                 else:
                     self.addToken("Tk_id",self.token)
+                    self.addTexto("Tk_id",self.token)
                     print("ID COLOR : "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -419,6 +437,7 @@ class analizadorcss:
                 else: # si no viene * erro para /
                     self.token += self.txtEntrada[puntero]
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)  
                     self.numeroError += 1
                     self.columna += 1
@@ -428,8 +447,12 @@ class analizadorcss:
 
 
             elif self.estado == 12:
+                if self.txtEntrada[puntero] == "\n":
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 12
+                    self.fila += 1
                 # si viene un es diferente *
-                if self.txtEntrada[puntero] != chr(42):
+                elif self.txtEntrada[puntero] != chr(42):
                     self.token += self.txtEntrada[puntero]
                     self.estado = 12
 
@@ -454,6 +477,7 @@ class analizadorcss:
             elif self.estado == 14:
                 #acepto el token
                 self.addToken("Tk_comentario",self.token)
+                self.addTexto("Tk_comentario",self.token)
                 print("Comentario : "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -478,7 +502,7 @@ class analizadorcss:
         self.BusquedaRuta()
         #termina el while y retorno
         #retorno los erros que si existieran
-        return self.listaErrores,self.listadoBitacora
+        return self.listaErrores,self.listadoBitacora,self.textoSalida
         #fin del metodo del automo
 
 

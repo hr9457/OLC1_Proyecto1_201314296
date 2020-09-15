@@ -19,7 +19,7 @@ class analizadorOperaciones:
         self.listaErrorOperaciones = []
         self.contador = 0 
         self.reporteOperaciones = []       
-
+        self.textoSalida = []
 
     # metodo para saber si es una letra
     def isLetter(self,caracter):
@@ -43,21 +43,27 @@ class analizadorOperaciones:
     def isSymbol(self,caracter):
         if caracter == chr(40): # (
             self.addToken("Tk_apertura",caracter)
+            self.addTexto("Tk_apertura",caracter)
             return True
         elif caracter == chr(41): # )
             self.addToken("Tk_cierre",caracter)
+            self.addTexto("Tk_cierre",caracter)
             return True
         elif caracter == chr(42): # *
             self.addToken("Tk_multipliacion",caracter)
+            self.addTexto("Tk_multipliacion",caracter)
             return True
         elif caracter == chr(43): # +
             self.addToken("Tk_suma",caracter)
+            self.addTexto("Tk_suma",caracter)
             return True
         elif caracter == chr(45): # -  
             self.addToken("Tk_resta",caracter)  
+            self.addTexto("Tk_resta",caracter)
             return True    
         elif caracter == chr(47): # /
             self.addToken("Tk_division",caracter)
+            self.addTexto("Tk_division",caracter)
             return True
         else:
             return False
@@ -72,6 +78,10 @@ class analizadorOperaciones:
     def errorLexico(self,numero,fila,columna,token):
         self.listaErrores.append([""+str(numero),""+str(fila),
         ""+str(columna),""+token])
+
+    # agregar texto y devolver
+    def addTexto(self,lexema,token):
+        self.textoSalida.append([lexema,token])
 
 
     #automata
@@ -109,17 +119,19 @@ class analizadorOperaciones:
                 # si viene un espacio en blanco
                 elif self.txtEntrada[puntero] == " ":
                     self.columna += 1  
+                    self.addTexto("carrito"," ")
 
 
                 # si viene un tabulacion o un retorno de carro
                 elif (self.txtEntrada[puntero] == "\t"
                 or self.txtEntrada[puntero] == "\r"):
-                    pass
+                    self.addTexto("carrito","\t")
 
                     
                 # si vien un salto de linea
                 elif self.txtEntrada[puntero] == "\n":
                     self.addToken("tk_salto",self.txtEntrada[puntero])
+                    self.addTexto("carrito","\n")
                     #print("Fin Op: "+self.token)
                     #**************************************************
                     finalLista = len(self.listaToken) #tamanio de la lista = posicion final
@@ -160,6 +172,7 @@ class analizadorOperaciones:
                     #numero fila columna token
                     self.token += self.txtEntrada[puntero]
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     #self.addToken("ERROR",self.token)
                     print("Error lexico: "+self.token)  
                     self.numeroError += 1
@@ -171,6 +184,7 @@ class analizadorOperaciones:
             # ESTADO PARA SIMBOLOS y/o ACEPTACION
             elif self.estado == 1:
                 #self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("operador: "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -200,6 +214,7 @@ class analizadorOperaciones:
                     # concatengo toda la operacion 
                     self.operacion += self.token
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("digito: "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -221,6 +236,7 @@ class analizadorOperaciones:
                 else:
                     #error en la cadena
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     #self.addToken("ERROR",self.token)
                     print("Error lexico: "+self.token)
                     #self.addToken(self.token)
@@ -245,6 +261,7 @@ class analizadorOperaciones:
                 else:
                     self.operacion += self.token
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("digito: "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -281,6 +298,7 @@ class analizadorOperaciones:
                 else:
                     self.operacion += self.token
                     self.addToken("Tk_id",self.token)
+                    self.addTexto("Tk_id",self.token)
                     print("variable: "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -294,7 +312,7 @@ class analizadorOperaciones:
 
         self.reporteHTML()
         #retorno la lista de erroes si existieran
-        return self.listaErrores
+        return self.listaErrores,self.textoSalida
 
 
 

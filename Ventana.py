@@ -17,6 +17,54 @@ from parseHTML.AnalizadorHTML import AnalizadorHTML # analizador lexico del html
 #saber que tipo de archivo fue el de apertura
 tipoArchivo = ""
 nombreArchivo = "" 
+listaTokenRecibidos = []
+
+#--------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+def remplazoTexto():
+    global areaTexto
+    areaTexto.delete("1.0",END+"-1c")
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+def pintarTexto():
+    global listaTokenRecibidos
+    if len(listaTokenRecibidos) == 0:
+        pass
+    else:
+        remplazoTexto()
+        #configuracionColores()
+        for fila in range(len(listaTokenRecibidos)):
+            #print(listaTokenRecibidos[fila][0])
+            #for columna in range(len(listaTokenRecibidos[fila])):
+            if listaTokenRecibidos[fila][0] == "Tk_reservada":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_reservada")
+
+            elif listaTokenRecibidos[fila][0] == "Tk_id":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_id")
+
+            elif listaTokenRecibidos[fila][0] == "Tk_string":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_string")
+
+            elif listaTokenRecibidos[fila][0] == "Tk_digito":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_digito")
+
+            elif listaTokenRecibidos[fila][0] == "Tk_comentario":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_comentario")
+
+            elif listaTokenRecibidos[fila][0] == "Tk_operador":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "Tk_operador")
+
+            elif listaTokenRecibidos[fila][0] == "otro":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "otro")
+
+            elif listaTokenRecibidos[fila][0] == "carrito":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "otro")
+
+            elif listaTokenRecibidos[fila][0] == "error":
+                areaTexto.insert(INSERT,listaTokenRecibidos[fila][1], "error")
+        
 
 # METODO PARA BORRAR LO DEL TEXT AREA
 #--------------------------------------------------------------------
@@ -61,19 +109,23 @@ def pruebaTexto():
     areaTexto.tag_config("tk_operador", foreground="#4371CD")
     areaTexto.tag_config("tk_numero",foreground="#FF9A1B")
     areaTexto.insert(INSERT,"var1", "tk_id")
+    areaTexto.insert(INSERT," ",)
     areaTexto.insert(INSERT,"=","tk_operador")
+    areaTexto.insert(INSERT,"\n",)
     areaTexto.insert(INSERT,"5555","tk_numero")
 
+
+# METODO PARA ANALIZAR LOS TEXTO CON CADA ANALIZADOR LEXICO
 #------------------------------------------------------------------------
 def analizar():    
     
     listadoBitacoraCSS = []
-    listaTokenRecibidos = []
     listaErroresRecibidos = []
     textoCargado = "" 
     global areaTexto
     global areaTextoErrore
     global tipoArchivo
+    global listaTokenRecibidos
     #--------
     textoCargado = areaTexto.get("0.0",END+"-1c")
     textoCargado = textoCargado + "\n"    
@@ -90,23 +142,23 @@ def analizar():
         #ARCHIVO JS
         if tipoArchivo == "js":
             analizadorjs = parseJS(textoCargado,nombreArchivo)       
-            listaErroresRecibidos = analizadorjs.automata()
+            listaErroresRecibidos,listaTokenRecibidos = analizadorjs.automata()
         #************************************
         #ARCHIVO CSS
         elif tipoArchivo == "css":
             css = analizadorcss(textoCargado,nombreArchivo)
-            listaErroresRecibidos,listadoBitacoraCSS = css.automata()
+            listaErroresRecibidos,listadoBitacoraCSS,listaTokenRecibidos = css.automata()
         #************************************
         #ARCHIVO HTML
         elif tipoArchivo == "html":
             html = AnalizadorHTML(textoCargado,nombreArchivo)
-            listaErroresRecibidos = html.automata()
+            listaErroresRecibidos,listaTokenRecibidos = html.automata()
         #************************************
         #ARCHIVO RMT
         elif tipoArchivo == "rmt":
             operacones = analizadorOperaciones(textoCargado)            
             # multiple return = erroes lexicos y los token aceptados
-            listaErroresRecibidos = operacones.automata()
+            listaErroresRecibidos,listaTokenRecibidos = operacones.automata()
             #envio y analisis sintactico
             #operacionesSintactico = analizadoSintactico(listaTokenRecibidos)
             #operacionesSintactico.arranque()
@@ -221,12 +273,16 @@ def analizar():
             archivo.write("</head>\n")
             archivo.write("</html>\n")
             archivo.close()
+
+    #PINTADO DESPUES DE ANALIZAR
+    pintarTexto()
 #-------------------------------------------------------------------------
 
 #------------------------------------------------------------------------
 def contadorLineas():
     global LineasTexto
     global areaTexto
+    LineasTexto.delete("1.0",END+"-1c")
     total = int(areaTexto.index(END).split('.')[0])
     print(total)
     i = 0
@@ -252,12 +308,18 @@ def reporteAutomata():
 #--------------------------------------------------------------------------
 
 
+# METODO PARA ABRIR EL REPORTE DE OPERACIONES
 #---------------------------------------------------------------------------
 def reporteOperacion():
     comandoApertura ='ReporteHTML\\Operaciones.html'
     subprocess.Popen(comandoApertura,shell=True)
+
+
+# METODO PARA EL SCROLL
 #---------------------------------------------------------------------------
 def scroll(x, y):
+    global areaTexto
+    global LineasTexto
     areaTexto.yview(x,y)
     LineasTexto.yview(x,y)
 
@@ -317,7 +379,7 @@ scrollbarY.grid(row=0,column=2,sticky="ns")
 
 #-------------------------------------------------
 LineasTexto = Text(raiz)  
-LineasTexto.config(width=3,height=20,font=("Consolas",14),borderwidth=1,background="#282a36",fg='White')
+LineasTexto.config(width=3,height=20,font=("Comic Sans MS",14),background="#282a36",fg='White')
 LineasTexto.grid(row=0,column=0,sticky="ns")
 #listaNumeros =Listbox(raiz)
 #listaNumeros.config(width=3,height=20,font=("Consolas",11),borderwidth=1,background="#282a36",fg='White')
@@ -337,9 +399,10 @@ LineasTexto.grid(row=0,column=0,sticky="ns")
 
 
 # area de texto para mostar el texto a analizar
+# 282a36
 areaTexto = Text(raiz)        
 areaTexto.config(height=20, width = 10,
-font=("Consolas",14),borderwidth=0,background="#282a36",fg='White',selectbackground="#779ECB"
+font=("Comic Sans MS",14),borderwidth=0,background="#282a36",fg='White',selectbackground="#779ECB"
 ,insertbackground='white',wrap="none")
 # posicion en la matriz y que se expanda en los cuatro puntos cardinales
 areaTexto.grid(row=0,column=1,sticky="ew")
@@ -357,14 +420,14 @@ areaTexto.config(xscrollcommand=scrollbarX.set)
 
 #*******************************************
 #colores predeterminados para el area de texto
-areaTexto.tag_config("Tk_reservada", foreground="#F42424")#palabras reservadas
-areaTexto.tag_config("Tk_id", foreground="#1CC31C")#variables
-areaTexto.tag_config("Tk_string", foreground="#EDF223")#string y char
-areaTexto.tag_config("Tk_digito", foreground="#20679D")#enteros y boolean
-areaTexto.tag_config("Tk_comentario", foreground="#BE1C82")#comentarios
-areaTexto.tag_config("Tk_operador", foreground="#F48024")#operadores
-areaTexto.tag_config("otro",foreground="#179D7F")#otros
-
+areaTexto.tag_config("Tk_reservada", foreground="#F80047")#palabras reservadas
+areaTexto.tag_config("Tk_id", foreground="#00E656")#variables
+areaTexto.tag_config("Tk_string", foreground="#FFFC00")#string y char
+areaTexto.tag_config("Tk_digito", foreground="#25CCF7")#enteros y boolean
+areaTexto.tag_config("Tk_comentario", foreground="#747d8c")#comentarios
+areaTexto.tag_config("Tk_operador", foreground="#FFA700")#operadores
+areaTexto.tag_config("otro",foreground="#c8d6e5")#otros
+areaTexto.tag_config("error", background="red", foreground="white")
 
 
 # separador
@@ -380,6 +443,7 @@ scrollbarErrorY.grid(row=2,column=2,sticky="ns")
 areaTextoErrore.config(yscrollcommand=scrollbarErrorY.set,
 font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
 
+#pruebaTexto()
 
 # bucle infinito
 raiz.mainloop()

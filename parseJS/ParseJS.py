@@ -21,6 +21,7 @@ class parseJS:
         "Math","function","class"] # lista de palabras reservadas
         #ruta de salida para el archivo en limpio
         self.rutaSalida  =  ""
+        self.textoSalida = []
 
 
 
@@ -75,7 +76,9 @@ class parseJS:
         self.listaErrores.append([""+str(numero),""+str(fila),
         ""+str(columna),token])
 
-
+    # agregar texto y devolver
+    def addTexto(self,lexema,token):
+        self.textoSalida.append([lexema,token])
 
     #*********************************************************************************
     #---------------------------------------------------------------------------------
@@ -154,6 +157,8 @@ class parseJS:
                 elif (self.txtEntrada[puntero] == ' '):
                     #ignoro paso al siguiente caracter
                     self.addToken("carrito"," ")
+                    # texto de salida
+                    self.addTexto("carrito"," ")
                     self.columna += 1
                     self.estado = 0
 
@@ -161,10 +166,14 @@ class parseJS:
                 elif (self.txtEntrada[puntero] == '\t'
                 or self.txtEntrada[puntero] == '\r'):
                     self.addToken("carrito","\t")
+                    # texto de salida
+                    self.addTexto("carrito","\t")
 
                 # salto de linea
                 elif self.txtEntrada[puntero] == '\n':
                     self.addToken("carrito","\n")
+                    # texto de salida
+                    self.addTexto("carrito","\n")
                     self.fila += 1
                     self.columna = 0
                     self.estado = 0
@@ -175,6 +184,8 @@ class parseJS:
                     #numero fila columna token
                     self.token += self.txtEntrada[puntero]
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    # texto de salida
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -207,6 +218,8 @@ class parseJS:
                     #buscando la concatenacion en la lista de palabras reservadas
                     if self.token in self.listaReservadas:
                         self.addToken("Tk_reservada",self.token)
+                        # texto de salida
+                        self.addTexto("Tk_reservada",self.token)
                         print("RESERVADA : "+self.token)
                         self.token = ""
                         self.columna += 1
@@ -214,6 +227,8 @@ class parseJS:
                         puntero -= 1
                     else:
                         self.addToken("Tk_id",self.token)
+                        # texto de salida
+                        self.addTexto("Tk_id",self.token)
                         print("ID : "+self.token)
                         self.token = ""
                         self.columna += 1
@@ -247,6 +262,7 @@ class parseJS:
                 # ACEPTO
                 else:
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("Numero : "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -271,6 +287,7 @@ class parseJS:
             elif self.estado == 3:
                 lex = self.txtEntrada[puntero]
                 self.addToken("Tk_operador",self.token)
+                self.addTexto("Tk_operador",self.token)
                 print("Operador: "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -306,6 +323,7 @@ class parseJS:
                 # ACEPTO LA CADENA
                 else:
                     self.addToken("Tk_operador",self.token)
+                    self.addTexto("Tk_operador",self.token)
                     print("operador : "+self.token)
                     self.token = ""
                     self.columna += 1
@@ -325,10 +343,12 @@ class parseJS:
                 # ACEPTO LA CADENA 
                 else:
                     self.addToken("Tk_comentario",self.token)
+                    self.addTexto("Tk_comentario",self.token)
                     print("COMENTARIO : "+self.token)
                     self.token = ""
                     self.columna += 1
                     self.estado = 0
+                    self.fila += 1
                     puntero -= 1
                 #******************************************
                 #ESCRITURA DEL NODO AL QUE LLEGO EN EL ARCHIVO DOT
@@ -345,8 +365,13 @@ class parseJS:
             #---------------------------------------------------------------
             # comentario multilinea
             elif self.estado == 6:
+                if self.txtEntrada[puntero] == "\n":
+                    self.token += self.txtEntrada[puntero]
+                    self.estado = 6
+                    self.fila += 1
+
                 # aceptar todo todillo
-                if self.txtEntrada[puntero] != chr(42): # *
+                elif self.txtEntrada[puntero] != chr(42): # *
                     self.token += self.txtEntrada[puntero]
                     self.estado = 6
 
@@ -375,6 +400,7 @@ class parseJS:
             # estado para verificar si va se cerrar comentario multilinea
             elif self.estado == 8:
                 self.addToken("Tk_comentario",self.token)
+                self.addTexto("Tk_comentario",self.token)
                 print("COMENTARIO : "+self.token)
                 self.token = ""
                 self.columna += 1
@@ -411,6 +437,7 @@ class parseJS:
                 # si viene salto de linea despues de comillas
                 elif self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -429,6 +456,7 @@ class parseJS:
                 # si vien un salto de linea
                 if self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -458,6 +486,7 @@ class parseJS:
             elif self.estado == 11:
                 #self.token = self.txtEntrada[puntero]
                 self.addToken("Tk_string",self.token)
+                self.addTexto("Tk_string",self.token)
                 print("CADEMA : "+self.token)
                 self.token = ""  
                 self.columna += 1
@@ -495,6 +524,7 @@ class parseJS:
                 # si viene salto de linea despues de comillas
                 elif self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -513,6 +543,7 @@ class parseJS:
                 # si vien un salto de linea
                 if self.txtEntrada[puntero] == "\n":
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -540,6 +571,7 @@ class parseJS:
             elif self.estado == 14:
                 #self.token = self.txtEntrada[puntero]
                 self.addToken("Tk_string",self.token)
+                self.addTexto("Tk_string",self.token)
                 print("CADENA : "+self.token)
                 self.token = ""  
                 self.columna += 1
@@ -554,6 +586,7 @@ class parseJS:
 
                 else:                    
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.token)
+                    self.addTexto("error",self.token)
                     print("Error lexico: "+self.token)                    
                     self.token = ""
                     self.numeroError += 1
@@ -571,6 +604,7 @@ class parseJS:
 
                 else:
                     self.addToken("Tk_digito",self.token)
+                    self.addTexto("Tk_digito",self.token)
                     print("DIGITO :"+self.token)
                     self.token = ""
                     self.columna += 1
@@ -602,7 +636,7 @@ class parseJS:
         #print("linea 1: "+self.listaToken[2][1])
         self.BusquedaRuta()
         # retorno de la lista con los error encontrados en el archivo
-        return self.listaErrores
+        return self.listaErrores,self.textoSalida
         
 
 
