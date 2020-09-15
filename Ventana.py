@@ -34,10 +34,15 @@ def guardarArchivo():
 def guardarComo():
     global save
     global areaTexto
-    guardarArchivo = filedialog.asksaveasfilename(filetypes=[("All files","*")])
-    file = open(guardarArchivo,'w')
-    file.write(areaTexto.get(1.0,END))
-    file.close()
+    # si ocurre un problema al guardar el archivo como.....
+    try:
+        guardarArchivo = filedialog.asksaveasfilename(filetypes=[("All files","*")])
+        file = open(guardarArchivo,'w')
+        file.write(areaTexto.get(1.0,END))
+        file.close()
+    except:
+        # por si la apertura del archivo presenta un error
+        messagebox.showinfo("ALERTA","Error al  guardar \nel archivo")
 
 # METODO PARA BORRAR LO QUE HAY EN EL ARETE DE TEXTO PRINCIPAL
 #---------------------------------------------------------------------
@@ -104,23 +109,29 @@ def openFile():
     global save # variable para la funcion de guardar archivo
     areaTexto.delete("1.0",END+"-1c")
     areaTextoErrore.delete("1.0",END+"-1c")
-    filename = filedialog.askopenfilename(title="Busqueda",
-    filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))  
-    save = filename
-    #****NOMBRE DEL ARCHIVO
-    nombreArchivo = Path(filename).stem
-    #  
-    txt_file = open(""+filename,'r',encoding='utf-8')
-    lectura = txt_file.read()
-    areaTexto.insert(END,lectura)
-    txt_file.close()
-    archivoSeperado = filename.split(".")
-    tipoArchivo = archivoSeperado[1]
-    areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo+"\n")
-    #areaTextoErrore.insert(INSERT,"Nombre del archivo-> "+nombreArchivo)
 
-    # PRUEBA DE CONTEO DE LINEA
-    contadorLineas()
+    # error en la apertura dle archivo
+    try:
+        filename = filedialog.askopenfilename(title="Busqueda",
+        filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))  
+        save = filename
+        #****NOMBRE DEL ARCHIVO
+        nombreArchivo = Path(filename).stem
+        #  
+        txt_file = open(""+filename,'r',encoding='utf-8')
+        lectura = txt_file.read()
+        areaTexto.insert(END,lectura)
+        txt_file.close()
+        archivoSeperado = filename.split(".")
+        tipoArchivo = archivoSeperado[1]
+        areaTextoErrore.insert(INSERT,"Archivo: "+tipoArchivo+"\n")
+        #areaTextoErrore.insert(INSERT,"Nombre del archivo-> "+nombreArchivo)
+
+        # PRUEBA DE CONTEO DE LINEA
+        contadorLineas()
+    except:
+        # por si la apertura del archivo presenta un error
+        messagebox.showinfo("ALERTA","Hubo un error en la \napertura del archivo")
 
 #pruebapara colo de texto para el pintado de las letras
 #------------------------------------------------------------------------
@@ -466,6 +477,7 @@ areaTextoErrore.config(yscrollcommand=scrollbarErrorY.set,
 font=("Consolas",13),borderwidth=1,background="#282a36",fg='White')
 
 #pruebaTexto()
+#hilo para contador de lineas
 
 # bucle infinito
 raiz.mainloop()

@@ -242,7 +242,9 @@ class AnalizadorHTML:
                             self.token = ""
                     else:
                         pass
-                        
+                    
+                    self.addToken("carrito",self.txtEntrada[puntero])
+                    self.addTexto("carrito",self.txtEntrada[puntero])
                     self.estado = 2
 
 
