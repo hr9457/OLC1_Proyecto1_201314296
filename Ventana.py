@@ -18,15 +18,24 @@ from parseHTML.AnalizadorHTML import AnalizadorHTML # analizador lexico del html
 tipoArchivo = ""
 nombreArchivo = "" 
 listaTokenRecibidos = []
+save = ""
 
+# METODO PARA GUARDAR SI SE EDITA ALGO EN EL ARCHIVO Y SE EDITA
 #--------------------------------------------------------------------
+def guardarArchivo():
+    global save
+    global areaTexto
+    guardarArchivo = open(save,'w')
+    guardarArchivo.write(areaTexto.get(1.0,END))
 
+# METODO PARA BORRAR LO QUE HAY EN EL ARETE DE TEXTO PRINCIPAL
 #---------------------------------------------------------------------
 def remplazoTexto():
     global areaTexto
     areaTexto.delete("1.0",END+"-1c")
 #---------------------------------------------------------------------
 
+# METODO PARA PINTAR LAS PALABRAS 
 #---------------------------------------------------------------------
 def pintarTexto():
     global listaTokenRecibidos
@@ -81,10 +90,12 @@ def openFile():
     global areaTextoErrore # area de texto de bitacora
     global tipoArchivo #tipo de archiov de apertura 
     global nombreArchivo #nombre del archivo de entrada
+    global save # variable para la funcion de guardar archivo
     areaTexto.delete("1.0",END+"-1c")
     areaTextoErrore.delete("1.0",END+"-1c")
     filename = filedialog.askopenfilename(title="Busqueda",
     filetypes=(("HTML","*.html"),("JS","*.js"),("CSS","*.css"),("RMT","*.rmt")))  
+    save = filename
     #****NOMBRE DEL ARCHIVO
     nombreArchivo = Path(filename).stem
     #  
@@ -360,7 +371,7 @@ fileReporte = Menu(menubar)
 
 menubar.add_cascade(label="Nuevo", command=new)
 menubar.add_cascade(label="Abrir",  command = openFile)
-menubar.add_cascade(label="Guardar", command = pruebaTexto)
+menubar.add_cascade(label="Guardar", command = guardarArchivo)
 menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
 menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Reportes",menu=fileReporte)
