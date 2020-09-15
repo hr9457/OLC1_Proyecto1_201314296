@@ -28,6 +28,17 @@ def guardarArchivo():
     guardarArchivo = open(save,'w')
     guardarArchivo.write(areaTexto.get(1.0,END))
 
+
+# METODO PARA GUARDAR COMO
+#--------------------------------------------------------------------
+def guardarComo():
+    global save
+    global areaTexto
+    guardarArchivo = filedialog.asksaveasfilename(filetypes=[("All files","*")])
+    file = open(guardarArchivo,'w')
+    file.write(areaTexto.get(1.0,END))
+    file.close()
+
 # METODO PARA BORRAR LO QUE HAY EN EL ARETE DE TEXTO PRINCIPAL
 #---------------------------------------------------------------------
 def remplazoTexto():
@@ -372,7 +383,7 @@ fileReporte = Menu(menubar)
 menubar.add_cascade(label="Nuevo", command=new)
 menubar.add_cascade(label="Abrir",  command = openFile)
 menubar.add_cascade(label="Guardar", command = guardarArchivo)
-menubar.add_cascade(label="Guardar Como", menu=guardarComomenu)
+menubar.add_cascade(label="Guardar Como", command=guardarComo)
 menubar.add_cascade(label="Ejecutar", command=analizar)
 menubar.add_cascade(label="Reportes",menu=fileReporte)
 fileReporte.add_cascade(label="Reporte HTML", command=reporteHtml)
