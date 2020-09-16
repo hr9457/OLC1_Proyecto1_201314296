@@ -31,4 +31,12 @@ nodoComilla1->nodoT [label=" T "];
 nodoT->nodoT [label=" T "];
 nodoT->nodoComilla2 [label=" T "];
 nodoComilla1->nodoComilla2 [label=" \" "]; 
+nodoDigito[shape=doublecircle,label="q2"];
+nodoRaiz->nodoDigito[label="D"];
+nodoDigito->nodoDigito[label="D"];
+nodoPunto[shape=circle,label="q15"];
+nodoDecimal[shape=doublecircle,label="q16"];
+nodoDigito->nodoPunto[label="."];
+nodoPunto->nodoDecimal[label="D"];
+nodoDecimal->nodoDecimal[label="D"];
 }

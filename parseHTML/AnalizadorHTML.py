@@ -620,28 +620,32 @@ class AnalizadorHTML:
         carpetaDestino = 'salidaArchivos\\'+archivoSinCierre[0].rstrip()
         print("------>"+carpetaDestino)
 
-        #verificacion de la existencias de de las rutas
-        if os.path.isdir(carpetaDestino)==True:
-            archivo = carpetaDestino + "\\"+self.nombreArchivo
-            print("---->"+archivo)
-            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
-            #********************************************************
-            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
-            for fila in range(len(self.listaToken)):
-                archivoSalidaJS.write(""+self.listaToken[fila][1])
+        # errro en la creacion de archivos   
+        try:
+            #verificacion de la existencias de de las rutas
+            if os.path.isdir(carpetaDestino)==True:
+                archivo = carpetaDestino + "\\"+self.nombreArchivo
+                print("---->"+archivo)
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
 
-            archivoSalidaJS.close()
+                archivoSalidaJS.close()
 
-        else:
-            #metodo para la creacion de archivos
-            os.makedirs(carpetaDestino)#metodo que crea carpetas
-            archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
-            #********************************************************
-            #ESCIRTURA PARA EL ARCHIVO DE SALIDA
-            for fila in range(len(self.listaToken)):
-                archivoSalidaJS.write(""+self.listaToken[fila][1])
+            else:
+                #metodo para la creacion de archivos
+                os.makedirs(carpetaDestino)#metodo que crea carpetas
+                archivoSalidaJS = open(""+carpetaDestino+"\\"+self.nombreArchivo+".html","w")
+                #********************************************************
+                #ESCIRTURA PARA EL ARCHIVO DE SALIDA
+                for fila in range(len(self.listaToken)):
+                    archivoSalidaJS.write(""+self.listaToken[fila][1])
 
-            archivoSalidaJS.close()
+                archivoSalidaJS.close()
+        except:
+            messagebox.showinfo("ALERTA","Error en la ruta \nCarpeta destino")
 
 
 
