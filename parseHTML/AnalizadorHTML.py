@@ -1,6 +1,9 @@
 import io
 import os
 import subprocess
+import subprocess
+from tkinter import messagebox
+from tkinter import filedialog
 
 # anlizar para la parte del archivo en html
 class AnalizadorHTML:
@@ -155,7 +158,7 @@ class AnalizadorHTML:
 
 
                 # SI  VIENE UN SIGNO DE ADMIRACION ES UNA POSIBLE COMENTARIO
-                elif self.txtEntrada[puntero] == chr(33):
+                elif self.txtEntrada[puntero] == chr(33): # !
                     self.token += self.txtEntrada[puntero]
                     self.estado = 12
 
@@ -275,7 +278,22 @@ class AnalizadorHTML:
 
 
                 #captura de errores dentro de las etiquetas
-                else:
+                else:                    
+                    if self.token != "":
+                        #acepto la cadena
+                        if self.token.lower() in self.palabrasReservadas:
+                            self.addToken("Tk_reservada",self.token)
+                            self.addTexto("Tk_reservada",self.token)
+                            print("PALABRA RESERVADA : "+self.token)
+                            self.token = ""                        
+                        else:
+                            self.addToken("Tk_id",self.token)
+                            self.addTexto("Tk_id",self.token)
+                            print("ID : "+self.token)
+                            self.token = ""
+                    else:
+                        pass
+
                     self.errorLexico(self.numeroError,self.fila,self.columna,self.txtEntrada[puntero])
                     self.addTexto("error",self.txtEntrada[puntero])
                     print("ERROR LEXICO ETIQUETAS: "+self.txtEntrada[puntero])
@@ -630,6 +648,7 @@ class AnalizadorHTML:
     #----------------------------------------------------------------------------------------------
     #metodo para la creacion de la carpet destino para el archivo de JS
     def BusquedaRuta(self):
+        rutaWindows = ""
         # si el archivo no contiene nada analizado
         if len(self.listaToken) == 0:
             print("---->No hay elementos en la lista")
@@ -637,6 +656,20 @@ class AnalizadorHTML:
         # busqued de la ruta en las dos priemras lineas
         else:
 
+            #buscar los primeros comentarios
+            for fila in range(len(self.listaToken)):
+                if self.listaToken[fila][0] == "Tk_comentario":
+                    if self.listaToken[fila][1].find("PATHW") > -1:
+                        rutaWindows = self.listaToken[fila][1]
+                        self.destino(rutaWindows)
+                        print("Ruta en la primera en la linea: ")
+                        break
+
+            # si no encuentra la ruta de salida para el archivo en limpio
+            if rutaWindows == "":
+                # por si no hay ruta de salida
+                messagebox.showinfo("ALERTA","NO se econtro ruta de salida")
+            '''
             #busqueda de la ruta en las dos primeras lineas
             if self.listaToken[0][1].find("PATHW") > -1:
                 rutaWindows = self.listaToken[0][1]
@@ -652,3 +685,4 @@ class AnalizadorHTML:
             # por si no viene la ruta en el archivo
             else:
                 pass
+            '''

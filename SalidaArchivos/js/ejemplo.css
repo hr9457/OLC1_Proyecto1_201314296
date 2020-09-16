@@ -1,4 +1,7 @@
-/*PATHW -> c:\user\output\js*/
+
+
+	/*PATHW -> c:\user\output\js*/
+
     html,body{
        margin:0;
         padding:0
@@ -57,6 +60,7 @@
     */
     divfooter{
         clear:left;
-        width:100% * 180  190.5px  5;
+        width:100% * 180   190.5px  5;
     }
+
 

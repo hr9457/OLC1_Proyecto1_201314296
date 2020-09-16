@@ -27,6 +27,7 @@ def guardarArchivo():
     global areaTexto
     guardarArchivo = open(save,'w')
     guardarArchivo.write(areaTexto.get(1.0,END))
+    guardarArchivo.close()
 
 
 # METODO PARA GUARDAR COMO

@@ -1,5 +1,8 @@
 import os
 import io
+import subprocess
+from tkinter import messagebox
+from tkinter import filedialog
 
 class analizadorcss:
     
@@ -545,6 +548,7 @@ class analizadorcss:
     #----------------------------------------------------------------------------------------------
     #metodo para la creacion de la carpet destino para el archivo de JS
     def BusquedaRuta(self):
+        rutaWindows = ""
         # si el archivo no contiene nada analizado
         if len(self.listaToken) == 0:
             print("---->No hay elementos en la lista")
@@ -552,6 +556,21 @@ class analizadorcss:
         # busqued de la ruta en las dos priemras lineas
         else:
 
+            #buscar los primeros comentarios
+            for fila in range(len(self.listaToken)):
+                if self.listaToken[fila][0] == "Tk_comentario":
+                    if self.listaToken[fila][1].find("PATHW") > -1:
+                        rutaWindows = self.listaToken[fila][1]
+                        self.destino(rutaWindows)
+                        print("Ruta en la primera en la linea: ")
+                        break
+
+            # si no encuentra la ruta de salida para el archivo en limpio
+            if rutaWindows == "":
+                # por si no hay ruta de salida
+                messagebox.showinfo("ALERTA","NO se econtro ruta de salida")
+
+            '''
             #busqueda de la ruta en las dos primeras lineas
             if self.listaToken[0][1].find("PATHW") > -1:
                 rutaWindows = self.listaToken[0][1]
@@ -565,4 +584,5 @@ class analizadorcss:
 
             else:
                 pass
+            '''
 
